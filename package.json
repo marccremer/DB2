@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "migrate": "npx knex migrate:latest",
-    "rolb": "npx knex migrate:rollback"
+    "rolb": "npx knex migrate:rollback",
+    "createMigration": "npx knex migrate:make"
   },
   "author": "",
   "license": "ISC",
