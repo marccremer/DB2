@@ -1,8 +1,11 @@
 module.exports = {
-  kunde: 'Kunde',
-  reservierung: 'Reservierung',
-  adresse: 'Adresse',
-  kontakt: 'Kontaktdaten',
   raum: 'Raum',
   tischgruppe: 'Tischgruppe',
+  tisch:'Tisch',
+  reservierung: 'Reservierung',
+  gebuchterTisch: 'gebuchterTisch',
+  kunde: 'Kunde',
+  kundentyp: 'Kundentyp',
+  kontaktdaten: 'Kontaktdaten',
+  adresse: 'Adresse',
 };

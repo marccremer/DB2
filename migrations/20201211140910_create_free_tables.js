@@ -6,47 +6,31 @@ const { idprime } = require('../src/tableUtils');
  */
 
 exports.up = async (knex) => {
-  await knex.schema.createTable(tableNames.table, (table) => {
-    table.increments().notNullable();
-  });
-  
-    await knex.schema.createTable(tableNames.tischgruppe, (table) => {
-      table.increments().notNullable();
-    });
   
   await knex.schema.createTable(tableNames.raum, (table) => {
     table.increments().notNullable();
-    table.string('RaumName', 20).notNullable();
-    table.float('Fläche in m2')
-  });
-
-  await knex.schema.createTable(tableNames.kontakt, (table) => {
-    table.increments().notNullable();
+    table.string('Name', 40).notNullable();
+    table.boolean('Ausenbereich')
+    table.float('Fläche in m2').notNullable()
   });
 
   await knex.schema.createTable(tableNames.adresse, (table) => {
     table.increments().notNullable();
   });
-  
-  await knex.schema.createTable(tableNames.kunde, (table) => {
+
+  await knex.schema.createTable(tableNames.kundentyp, (table) => {
     table.increments().notNullable();
+    table.boolean('hatReserviert').notNullable()
   });
   
-  await knex.schema.createTable(tableNames.reservierung, (table) => {
-    table.increments().notNullable();
-  });
 };
 
 exports.down = async (knex) => {
   await Promise.all(
     [
-      tableNames.table,
-      tableNames.tischgruppe,
       tableNames.raum,
       tableNames.adresse,
-      tableNames.kontakt,
-      tableNames.kunde,
-      tableNames.reservierung,
+      tableNames.kundentyp,
     ].map((tableName) => knex.schema.dropTableIfExists(tableName))
   );
 };

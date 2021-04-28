@@ -1,4 +1,6 @@
-# DB2 Praktikum - Reservierung
+# DB2 Praktikum - ReservierungsMaster2000
+Gruppe 47
+Betreuer: L. Radigk
 ## Requirements
 
 * node
