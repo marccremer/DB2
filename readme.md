@@ -1,6 +1,11 @@
 # DB2 Praktikum - ReservierungsMaster2000
 Gruppe 47
+
 Betreuer: L. Radigk
+
+https://th-koeln.zoom.us/j/88067891570
+Meeting-ID: 880 6789 1570
+Kenncode: dbs2
 ## Requirements
 
 * node
@@ -32,3 +37,14 @@ Then
 ```
 docker-compose up
 ```
+
+## Proceduren , Funktionen Views
+
+* max Anzahl Personen pro Raum _Funktion_
+* 1 neue Reservierung _Prozedur_
+* Teilnehmer einfügen _Prozedur_
+* Kunden im Restaurant jetzt _View_
+* Verfügbarkeit an Plätzen _Funktion_
+* Erlaube keine Inserts von Kunden die zu der Zeit schon irgendwo sitzen _Trigger/Constraint_
+* Umbuchung/Änderung der Buchung _Prozedur_
+* 

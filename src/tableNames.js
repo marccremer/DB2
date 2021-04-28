@@ -8,4 +8,5 @@ module.exports = {
   kundentyp: 'Kundentyp',
   kontaktdaten: 'Kontaktdaten',
   adresse: 'Adresse',
+  coronaInfo:'Izendez und mehr:D'
 };

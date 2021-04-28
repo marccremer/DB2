@@ -22,6 +22,13 @@ exports.up = async (knex) => {
     table.increments().notNullable();
     table.boolean('hatReserviert').notNullable()
   });
+
+  await knex.schema.createTable(tableNames.coronaInfo, (table) => {
+    table.increments().notNullable();
+    table.integer('momentane Inzidenz')
+    table.integer('maxAnzahlPersonnen pro qm')
+    table.dateTime('Datum')
+  }); 
   
 };
 
