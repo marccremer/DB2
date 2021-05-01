@@ -47,4 +47,3 @@ docker-compose up
 * Verfügbarkeit an Plätzen _Funktion_
 * Erlaube keine Inserts von Kunden die zu der Zeit schon irgendwo sitzen _Trigger/Constraint_
 * Umbuchung/Änderung der Buchung _Prozedur_
-* 

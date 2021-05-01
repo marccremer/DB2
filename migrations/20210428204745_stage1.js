@@ -1,5 +1,5 @@
 const tableNames = require('../src/tableNames');
-const { idprime } = require('../src/tableUtils');
+const { createNameTable } = require('../src/tableUtils');
 
 /**
  * @param {import('knex')} knex
@@ -16,6 +16,10 @@ exports.up = async (knex) => {
 
   await knex.schema.createTable(tableNames.adresse, (table) => {
     table.increments().notNullable();
+    table.string('strasse', 50).notNullable();
+    table.string('Hausnummer',12)
+    table.string('stadt', 50).notNullable();
+    table.string('zipcode', 15).notNullable();
   });
 
   await knex.schema.createTable(tableNames.kundentyp, (table) => {
@@ -25,7 +29,7 @@ exports.up = async (knex) => {
 
   await knex.schema.createTable(tableNames.coronaInfo, (table) => {
     table.increments().notNullable();
-    table.integer('momentane Inzidenz')
+    table.integer('momentane Inzidenz').notNullable()
     table.integer('maxAnzahlPersonnen pro qm')
     table.dateTime('Datum')
   }); 
@@ -38,6 +42,7 @@ exports.down = async (knex) => {
       tableNames.raum,
       tableNames.adresse,
       tableNames.kundentyp,
+      tableNames.coronaInfo
     ].map((tableName) => knex.schema.dropTableIfExists(tableName))
   );
 };
