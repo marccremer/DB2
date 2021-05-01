@@ -6,6 +6,11 @@ Betreuer: L. Radigk
 https://th-koeln.zoom.us/j/88067891570
 Meeting-ID: 880 6789 1570
 Kenncode: dbs2
+
+**nächster Termin:**
+
+DI.04.Mai 16:00
+
 ## Requirements
 
 * node
