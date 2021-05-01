@@ -1,4 +1,4 @@
-# DB2 Praktikum - ReservierungsMaster2000
+# DB2 Praktikum - ReservierungsMaster 21
 Gruppe 47
 
 Betreuer: L. Radigk
