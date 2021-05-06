@@ -1,4 +1,4 @@
-const tableNames = require('../src/tableNames');
+const tableNames = require('../../src/tableNames')
 /**
  * @param {import('knex')} knex
  */
