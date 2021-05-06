@@ -10,7 +10,7 @@ exports.up = async (knex) => {
     table.increments().notNullable();
     table.string('Name', 40).notNullable();
     table.boolean('Ausenbereich')
-    table.float('Fläche in m2').notNullable()
+    table.float('Flaeche_in_m2').notNullable()
   });
 
   await knex.schema.createTable(tableNames.adresse, (table) => {
@@ -28,8 +28,8 @@ exports.up = async (knex) => {
 
   await knex.schema.createTable(tableNames.coronaInfo, (table) => {
     table.increments().notNullable();
-    table.integer('momentane Inzidenz').notNullable()
-    table.integer('maxAnzahlPersonnen pro qm')
+    table.integer('momentane_Inzidenz').notNullable()
+    table.integer('maxAnzahlPersonnen_pro_qm')
     table.dateTime('Datum')
   }); 
   

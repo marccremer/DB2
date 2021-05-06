@@ -29,6 +29,7 @@ module.exports = {
     },
     seeds: {
       directory: './db/seeds',
+      loadExtensions: ['.ts'] 
     },
     debug: true,
     migrations: {

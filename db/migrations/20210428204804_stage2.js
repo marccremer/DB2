@@ -18,6 +18,7 @@ exports.up = async (knex) => {
  
   await knex.schema.createTable(tableNames.kunde, (table) => {
     table.increments().notNullable();
+    table.text('name').notNullable()
     references(table,tableNames.kontaktdaten)
     references(table,tableNames.kundentyp)
   });

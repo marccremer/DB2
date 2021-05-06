@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "typeRoots": ["node_modules/@types","db/models"],
+    "module": "commonjs",
+    "esModuleInterop": true,
+    "target": "es6",
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "outDir": "dist"
+  },
+  "lib": ["es2015"]
+}
