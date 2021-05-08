@@ -54,3 +54,4 @@ docker-compose up
 * Umbuchung/Änderung der Buchung _Prozedur_
 * Automatische Stornierung der Reservierung bei Überschreitung der Inzidenz _Trigger_
 * Automatische Änderung des Datensatzes anzahlTische in Raum, wenn Insert bei Tisch _Trigger_
+* Automatische Reduzierung der Plätze am Tisch, wenn die Inzidenz eine bestimmte Zielmarke erreicht hat _Trigger_
