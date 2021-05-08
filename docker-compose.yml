@@ -9,6 +9,7 @@ services:
     restart: always
     volumes:
       - ./db/db-data:/var/lib/mysql
+      - ./db/db-config:/etc/mysql/conf.d
     environment:
       MYSQL_ROOT_PASSWORD: rootuserpasswd
       MYSQL_DATABASE: developDB
