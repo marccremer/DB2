@@ -53,3 +53,4 @@ docker-compose up
 * Erlaube keine Inserts von Kunden die zu der Zeit schon irgendwo sitzen _Trigger/Constraint_
 * Umbuchung/Änderung der Buchung _Prozedur_
 * Automatische Stornierung der Reservierung bei Überschreitung der Inzidenz _Trigger_
+* Automatische Änderung des Datensatzes anzahlTische in Raum, wenn Insert bei Tisch _Trigger_
