@@ -1,11 +1,5 @@
-const tableNames = require('../src/tableNames');
-const {
-  addDefaultColumns,
-  createNameTable,
-  url,
-  email,
-  references,
-} = require('../src/tableUtils.js');
+const {references} = require('../../src/tableUtils')
+const tableNames = require('../../src/tableNames');
 
 /**
  * @param {import('knex')} knex
@@ -24,6 +18,7 @@ exports.up = async (knex) => {
  
   await knex.schema.createTable(tableNames.kunde, (table) => {
     table.increments().notNullable();
+    table.text('name').notNullable()
     references(table,tableNames.kontaktdaten)
     references(table,tableNames.kundentyp)
   });

@@ -1,11 +1,5 @@
-const tableNames = require('../src/tableNames');
-const {
-  addDefaultColumns,
-  createNameTable,
-  url,
-  email,
-  references,
-} = require('../src/tableUtils.js');
+const {references} = require('../../src/tableUtils')
+const tableNames = require('../../src/tableNames');
 
 /**
  * @param {import('knex')} knex

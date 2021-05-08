@@ -1,8 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-unused-expressions */
 require('dotenv').config();
-const logger = require('logger').createLogger('development.log'); // logs to a file
-
+const logger = require('logger').createLogger('logs/development.log'); // logs to a file
 module.exports = {
   production: {
     client: 'oracledb',
@@ -13,9 +12,10 @@ module.exports = {
       database: process.env.DB_REMOTE_NAME,
     },
     seeds: {
-      directory: './seeds',
+      directory: './db/seeds',
     },
     migrations: {
+      directory: './db/migrations',
       tableName: 'migrations',
     },
   },
@@ -28,10 +28,12 @@ module.exports = {
       database: process.env.DB_LOCAL_NAME,
     },
     seeds: {
-      directory: './seeds',
+      directory: './db/seeds',
+      loadExtensions: ['.ts'] 
     },
     debug: true,
     migrations: {
+      directory: './db/migrations',
       tableName: 'migrations',
     },
     log: {
