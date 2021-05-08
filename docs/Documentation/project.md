@@ -1,3 +1,4 @@
+## ReservierungsMaster21
 
 Seit Ausbruch der Corona Pandemie leidet insbesondere die Gastronomie an den von Bund und Ländern beschlossenen Auflagen. Bereits seit 6 Monaten ist den Kunden der Verzehr vor Ort untersagt. Lediglich die Lieferung und Abholung mitnahmefähiger Speisen für den Verzehr zu Hause bleiben weiterhin bestehen. Das Geschäftsmodell vieler Gastronomen ist jedoch nicht auf den To-Go Betrieb ausgelegt. Diese sind darauf angewiesen, ihre Kunden vor Ort zu bedienen. Im Zuge dessen sehen sich viele ihrer Existenz bedroht, sollten nicht in absehbarer Zeit Öffnungsperspektiven vorliegen.
 
