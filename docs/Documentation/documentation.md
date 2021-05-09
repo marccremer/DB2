@@ -59,6 +59,6 @@ Damit keine Redundanten Daten in der Datenbank existieren soll bei einem Insert 
 
 ## Views
 
-Eine sinnvolle View für die Datenbank ist eine Übersicht über die Kunden, welche aktuell im Restaurant sind. Eine weitere View ist es, eine Übersicht über die Buchungen von einem bestimmten Tag zu generieren.
+Eine sinnvolle View für die Datenbank ist eine Übersicht über die Kunden, welche aktuell im Restaurant sind. Eine weitere View ist es, eine Übersicht über die Buchungen von einem bestimmten Tag zu generieren. 
 
 ---

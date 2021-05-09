@@ -11,22 +11,19 @@ on:
       - 'docs/**/*.md'
       - 'docs/images/**'
 
+name: CreatePDFs
+
 jobs:
-  converttopdf:
-    name: Build PDF
+  makepdfs:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: baileyjm02/markdown-to-pdf@v1
-        with:
-          input_dir: docs/Documentation
-          output_dir: pdfs
-          images_dir: docs/images
-          # for example <img src="./images/file-name.png">
-          image_import: ./docs/images
-          # Default is true, can set to false to only get PDF files
-          build_html: true
-      - uses: actions/upload-artifact@v1
-        with:
-          name: docs
-          path: pdfs
+    - uses: actions/checkout@v1
+    - uses: mkrakowitzer/actions-makepdfs@master
+      if: github.ref == 'refs/heads/master'
+      with:
+        markdown_dir: docs/Documentation
+        output_dir: tmp
+    - uses: actions/upload-artifact@v1
+      with:
+        name: platform-architecture-docs
+        path: tmp
