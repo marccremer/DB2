@@ -17,7 +17,7 @@ jobs:
     - name: Create .pdfs
       uses: scottypate/md-to-pdf@v0.1.1
       env: 
-        # Use this parameter to determine where the generated .pdf(s) will be stored.
+        # Use this parameter to determine where the generated .pdf(s) will be stored.weqw
         PDF_DIR: './pdfs'
       
     - name: Create Pull Request
