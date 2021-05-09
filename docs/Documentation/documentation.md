@@ -1,11 +1,12 @@
 # ReservierungsMaster21
 
-### Teamvorstellung
+## Teamvorstellung
+
 * Maik Löwen (Teamleiter)
 * Marc Cremer
-* Christoph Josef Müller 
+* Christoph Josef Müller
 * Adrian Nierstenhöfer
-* Edgar Kinetz 
+* Edgar Kinetz
 
 ---
 
@@ -18,7 +19,8 @@ Mit unserer Applikation möchten wir einen Beitrag zur schrittweisen Wiedereröf
 Für die Realisierung unserer Idee benötigen wir einerseits die Kundendaten und zum anderen den aktuellen Inzidenzwert, der sich stätig ändert. Beides wird von uns gemockt, sprich die Daten werden von uns simuliert bzw. der Inzidenzwert per Zufall generiert, um eine gewisse Dynamik simulieren zu können. Künftig können wir uns auch vorstellen, die Daten zur Infektionslage von dem Robert Koch Institut (RKI) einzuholen, indem wir unsere Anwendung an eine API des RKI anbinden, um mit einer echten Datenbasis zu arbeiten. Dieses Feature sehen wir aber derzeit als “nice to have“ an und beschränken uns vorerst auf die von uns genierten Daten.
 
 ---
-## ERM-Diagramm 
+
+## ERM-Diagramm
 
 ![ERM-Diagramm_08052021.png](../ERM-Diagramm_08052021.png)
 
