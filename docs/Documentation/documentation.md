@@ -22,24 +22,24 @@ Für die Realisierung unserer Idee benötigen wir einerseits die Kundendaten und
 
 ## ERM-Diagramm
 
-![ERM-Diagramm_08052021.png](ERM-Diagramm_08052021.png)
+![ERM-Diagramm_08052021.png](../ERM-Diagramm_08052021.png)
 
 ---
 
 ## Use Case
 
-![Usecase-diagramm](UseCaseDiagramm.png)
+![Usecase-diagramm](../usecase/UseCaseDiagramm.png)
 
 ### Benutzergruppen
 
 #### __Kunde__
 
 Der Kunde ist der Hauptnutzer der Applikation.
-Er kann Reservierungen und Stornierungen vornehmen.   
+Er kann Reservierungen und Stornierungen vornehmen.
 #### __Admin__
 
 Der Admin ist der Administrator der Applikationen.
-Er kann Stornierungen vornehmen und den Inzidenzwert eintragen. 
+Er kann Stornierungen vornehmen und den Inzidenzwert eintragen.
 
 ---
 
