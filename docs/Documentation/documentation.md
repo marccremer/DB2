@@ -61,6 +61,6 @@ INSERT HERE
 
 ## Views
 
-    * Kunden zum aktuellen Zeitpunkt im Restaurant
+* Kunden zum aktuellen Zeitpunkt im Restaurant
 
 ---
