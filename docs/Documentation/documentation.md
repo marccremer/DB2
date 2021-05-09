@@ -22,13 +22,13 @@ Für die Realisierung unserer Idee benötigen wir einerseits die Kundendaten und
 
 ## ERM-Diagramm
 
-![ERM-Diagramm_08052021.png](../ERM-Diagramm_08052021.png)
+![ERM-Diagramm_08052021.png](images/ERM-Diagramm_08052021.png)
 
 ---
 
 ## Use Case
 
-![Usecase-diagramm](../usecase/UseCaseDiagramm.png)
+![Usecase-diagramm](images/UseCaseDiagramm.png)
 
 ### Benutzergruppen
 
