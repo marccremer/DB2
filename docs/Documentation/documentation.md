@@ -46,3 +46,20 @@ Für die Realisierung unserer Idee benötigen wir einerseits die Kundendaten und
 
 INSERT HERE
 
+---
+
+## Trigger
+
+    * Automatische Stornierung der Reservierung bei Überschreitung der Inzidenz 
+    * Automatische Änderung des Datensatzes anzahlTische in Raum, wenn Insert bei Tisch 
+    * Automatische Reduzierung der Plätze am Tisch, wenn die Inzidenz eine bestimmte Zielmarke erreicht hat 
+
+  INSERT MORE TRIGGERS HERE
+
+---
+
+## Views
+
+    * Kunden zum aktuellen Zeitpunkt im Restaurant
+
+---
