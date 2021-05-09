@@ -48,14 +48,17 @@ Er kann Stornierungen vornehmen und den Inzidenzwert eintragen.
 In der Datenbank muss häufig die maximale Anzahl an Personen pro Raum abgefragt werden. Um dies zu erleichtern erstellen wir eine Funktion, welche als Rückgabewert die maximale Anzahl an Personen pro Raum zurückgibt. Eine weitere Funktion liefert die Anzahl an noch freien Plätzen im lokal wieder.
 
 Da die Hauptaufgabe, und somit eine, sich oft wiederholende Prozedur, ist die Erstellung einer neuen Reservierung. Des Weiteren soll man zu den Reservierungen Personen hinzufügen können, welches eine weitere Prozedur darstellt, die sich klar von der Reservierungs-Prozedur abgrenzt. Die dritte Prozedur ist, dass man Umbuchungen vornehmen kann.
+
 ---
 
 ## Trigger
 
 Damit keine Redundanten Daten in der Datenbank existieren soll bei einem Insert ein Trigger überprüfen, ob der Kunde schon an dem bestimmten Tag gebucht hat. Zudem soll ein weiterer Insert Trigger eine Fehlermeldung zurückgeben, wenn man eine Person zu einer nicht vorhandenen Buchung hinzufügen möchte. Ein weiterer Insert oder Update Trigger storniert Reservierungen, wenn eine bestimmte Inzidenzzahl überschritten wurde. Der zweite Update und Insert Trigger Reduziert die Plätze für einen Raum, wenn eine bestimmte Inzidenzzahl überschritten wurde. Wenn ein weiterer Tisch hinzugefügt wird, sorgt ein Insert Trigger dafür, dass der Datensatz maxAnzahlPersonen aktualisiert wird.
+
 ---
 
 ## Views
 
 Eine sinnvolle View für die Datenbank ist eine Übersicht über die Kunden, welche aktuell im Restaurant sind. Eine weitere View ist es, eine Übersicht über die Buchungen von einem bestimmten Tag zu generieren.
+
 ---
