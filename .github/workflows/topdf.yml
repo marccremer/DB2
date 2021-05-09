@@ -13,7 +13,7 @@ jobs:
     - uses: mkrakowitzer/actions-makepdfs@master
       if: github.ref == 'refs/heads/main'
       with:
-        markdown_dir: docs
+        markdown_dir: docs/Documentation
         output_dir: tmp
     - uses: actions/upload-artifact@v1
       with:
