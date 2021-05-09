@@ -1,4 +1,4 @@
-# nice to havess
+# nice to havesss
 
 * Dokomentiere Grundidee
 * Erstelle eine Schnittstell zur einer API für Inzidenzen
