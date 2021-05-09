@@ -55,7 +55,7 @@ INSERT HERE
     * Automatische Änderung des Datensatzes anzahlTische in Raum, wenn Insert bei Tisch 
     * Automatische Reduzierung der Plätze am Tisch, wenn die Inzidenz eine bestimmte Zielmarke erreicht hat 
 
-  INSERT MORE TRIGGERS HERE
+  INSERT MORE TRIGGERS HEREE
 
 ---
 
