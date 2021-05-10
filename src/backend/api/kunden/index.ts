@@ -13,13 +13,12 @@ const configdb = {
   }
 };
 interface Kunde {
-  id: number;
+  id?: number;
   name: string;
   Kontaktdaten_id: number;
   Kundentyp_id: number;
 }
 const db : Knex = require('knex')(configdb);
-
 
 
 const router = express.Router({
@@ -28,26 +27,42 @@ const router = express.Router({
 
 router.get('/', async (req, res, next) => {
   try {
-    db.raw('select * from Kunde')
-    .then((kunde : Kunde) => { 
-      res.json(kunde);
-    });
+    db<Kunde>('Kunde')
+    .select('*')
+    .then(result => res.json(result))
     
   } catch (error) {
     next(error);
   }
 });
+
 router.get('/:kundenid', async (req, res, next) => {
   try {
-    db.raw('select * from Kunde where id = ?', [1])
-    .then((kunde : Kunde) => { 
-      res.json(kunde);
-    });
-    
+    let id = req.params.kundenid
+    // TODO: savety check if id is a Integer
+    db<Kunde>('Kunde')
+    .select(db.raw('*'))
+    .where(db.raw('id = ?',[id]))
+    .then(result =>{
+      res.json(result)
+    })
   } catch (error) {
     next(error);
   }
 });
+
+router.post('/', async (req, res, next) => {
+  try {
+    let newItem : Kunde = req.body
+    db<Kunde>('Kunde').insert(newItem).then(
+      result => res.json(result)
+    )
+    
+  } catch (error) {
+    next(error);
+  }  
+});
+
 
 
 export default router;
