@@ -1,15 +1,4 @@
-const tableNames = {
-  raum: "Raum",
-  tischgruppe: "Tischgruppe",
-  tisch: "Tisch",
-  reservierung: "Reservierung",
-  gebuchterTisch: "gebuchterTisch",
-  kunde: "Kunde",
-  kundentyp: "Kundentyp",
-  kontaktdaten: "Kontaktdaten",
-  adresse: "Adresse",
-  coronaInfo: "Izendez und mehr:D",
-};
+const tableNames = require('../../src/tableNames')
 
 /**
  * @param {import('knex')} knex
@@ -69,7 +58,13 @@ exports.seed = async (knex) => {
     Kontaktdaten_id: Kontaktdaten_id1,
     Kundentyp_id: kundentype_id1,
   };
+  const kunde3 = {
+    name: "Maik",
+    Kontaktdaten_id: Kontaktdaten_id1,
+    Kundentyp_id: kundentype_id1,
+  };
 
   const kunde_id1 = await knex(tableNames.kunde).insert(kunde1).returning("id");
   const kunde_id2 = await knex(tableNames.kunde).insert(kunde2).returning("id");
+  const kunde_id3 = await knex(tableNames.kunde).insert(kunde3).returning("id");
 };
