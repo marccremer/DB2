@@ -6,6 +6,7 @@
   "scripts": {
     "migrate": "npx knex migrate:latest",
     "rolb": "npx knex migrate:rollback",
+    "seed": "npx knex seed:run",
     "createMigration": "npx knex migrate:make",
     "start": "tsc && node dist/app.js",
     "dev": "nodemon"
