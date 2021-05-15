@@ -9,7 +9,7 @@ Kenncode: dbs2
 
 **nächster Termin:**
 
-DI.04.Mai 16:00
+DI.18.Mai 17:30
 
 ## Requirements
 
