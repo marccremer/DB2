@@ -43,6 +43,26 @@ Then
 docker-compose up
 ```
 
+## DB Setup
+
+Start the docker and go to localhost:8080.
+Login with root and rootuserpasswd.
+Run the SQL Command
+```sql
+SET GLOBAL log_bin_trust_function_creators = 1;
+```
+
+Then in a Terminal run 
+```js
+npm run migrate
+```
+and
+```js
+npm run seed
+```
+
+now you can login with the above mainUser.
+
 ## Proceduren , Funktionen Views
 
 * max Anzahl Personen pro Raum _Funktion_
