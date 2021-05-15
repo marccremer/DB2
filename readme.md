@@ -9,7 +9,7 @@ Kenncode: dbs2
 
 **nächster Termin:**
 
-DI.04.Mai 16:00
+DI.18.Mai 17:30
 
 ## Requirements
 
@@ -42,6 +42,12 @@ Then
 ```
 docker-compose up
 ```
+```
+set global..
+npm run migrate
+npm run seed
+```
+
 
 ## DB Setup
 
