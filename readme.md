@@ -42,6 +42,9 @@ Then
 ```
 docker-compose up
 ```
+set global..
+npm run migrate
+npm run seed
 
 ## Proceduren , Funktionen Views
 
