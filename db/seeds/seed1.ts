@@ -5,7 +5,7 @@ const tableNames = require('../../src/tableNames')
  */
 exports.seed = async (knex) => {
   // Deletes ALL existing entries
-  await Promise.all(Object.values(tableNames).map((name) => knex(name).del()));
+  //await Promise.all(Object.values(tableNames).map((name) => knex(name).del()));
   const adresse1 = {
     strasse: "Hauptstrasse",
     Hausnummer: "2",
