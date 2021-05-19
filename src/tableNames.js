@@ -3,9 +3,10 @@ module.exports = {
   tischgruppe: 'Tischgruppe',
   tisch:'Tisch',
   reservierung: 'Reservierung',
-  gebuchterTisch: 'gebuchterTisch',
+  gebuchterTisch: 'Tischreservierung',
+  begleiter:'Begleiter',
+  reservierer: 'Reservierer',
   kunde: 'Kunde',
-  kundentyp: 'Kundentyp',
   kontaktdaten: 'Kontaktdaten',
   adresse: 'Adresse',
   coronaInfo:'CoronaInfo'
