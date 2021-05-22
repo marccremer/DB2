@@ -1,4 +1,4 @@
-const {references} = require('../../src/tableUtils')
+const { references } = require('../../src/tableUtils');
 const tableNames = require('../../src/tableNames');
 
 /**
@@ -7,32 +7,33 @@ const tableNames = require('../../src/tableNames');
 exports.up = async (knex) => {
   await knex.schema.createTable(tableNames.tischgruppe, (table) => {
     table.increments().notNullable();
-    table.integer('Anzahl Tische')
-    references(table,tableNames.raum)
+    table.integer('Name');
+    references(table, tableNames.raum);
   });
 
-  await knex.schema.createTable(tableNames.kontaktdaten, (table) => {
+  await knex.schema.createTable(tableNames.tisch, (table) => {
     table.increments().notNullable();
-    references(table,tableNames.adresse)
+    table.integer('anzahl_plaetze').notNullable();
+    references(table, tableNames.tischgruppe);
   });
- 
+
   await knex.schema.createTable(tableNames.kunde, (table) => {
     table.increments().notNullable();
-    table.text('name').notNullable()
-    references(table,tableNames.kontaktdaten)
-    references(table,tableNames.kundentyp)
+    table.text('Vorname').notNullable();
+    table.text('Nachname').notNullable();
+    table.integer('Alter').notNullable();
+    references(table, tableNames.kontaktdaten);
   });
-
 };
 
 exports.down = async (knex) => {
   await Promise.all(
     [
       tableNames.tischgruppe,
-      tableNames.kontaktdaten,
-      tableNames.kunde
+      tableNames.tisch,
+      tableNames.kunde,
     ]
-    .reverse()
-    .map((tableName) => knex.schema.dropTableIfExists(tableName))
+      .reverse()
+      .map((tableName) => knex.schema.dropTableIfExists(tableName)),
   );
 };
