@@ -81,3 +81,25 @@ now you can login with the above mainUser.
 * Automatische Stornierung der Reservierung bei Überschreitung der Inzidenz _Trigger_
 * Automatische Änderung des Datensatzes anzahlTische in Raum, wenn Insert bei Tisch _Trigger_
 * Automatische Reduzierung der Plätze am Tisch, wenn die Inzidenz eine bestimmte Zielmarke erreicht hat _Trigger_
+
+### Trigger:
+* Fehlermeldung bei Hinzufügen von Kunden bei Reservierungen die schon zur Zeit woanders sitzen -> Insert _Maik_
+* Fehlermeldung bei Invaliden Kunden Insert  _Adrian_
+* Stornierung von Reservierungen _Marc_
+* Reduzierung an Plätzen an den Tischen _Edgar_
+* Erhöhen der maxAnzahlPersonen _Christoph_
+
+### Views:
+* Kunden im Restaurant jetzt
+* Reservierungen für einen bestimmten Tag
+
+### Funktion:
+* max Anzahl Personen pro Raum
+* Verfügbarkeit an Plätzen
+
+### Prozedur:
+* eine neue Reservierung
+* Teilnehmer einfügen
+* Umbuchung/Änderung der Buchung
+
+
