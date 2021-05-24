@@ -1,7 +1,8 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-unused-expressions */
 require('dotenv').config();
-const logger = require('logger').createLogger('logs/development.log'); // logs to a file
+const logger = require('logger').createLogger('logs/development.log');
+// logs to a file
 module.exports = {
   production: {
     client: 'oracledb',
@@ -29,7 +30,7 @@ module.exports = {
     },
     seeds: {
       directory: './db/seeds',
-      loadExtensions: ['.ts'] 
+      loadExtensions: ['.ts'],
     },
     debug: true,
     migrations: {
@@ -38,7 +39,7 @@ module.exports = {
     },
     log: {
       // you can do custom things here with the messages before logging
-      directory:'/logs',
+      directory: '/logs',
       warn(message) {
         logger.warn(message);
       },

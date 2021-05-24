@@ -7,7 +7,7 @@ const tableNames = require('../../src/tableNames');
 exports.up = async (knex) => {
   await knex.schema.createTable(tableNames.tischgruppe, (table) => {
     table.increments().notNullable();
-    table.integer('Name');
+    table.text('Name');
     references(table, tableNames.raum);
   });
 

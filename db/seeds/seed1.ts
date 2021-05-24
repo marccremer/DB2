@@ -1,70 +1,128 @@
-const tableNames = require('../../src/tableNames')
-
+import Knex from 'knex';
+import tableNames from '../../src/tableNames';
+import * as date from "date-and-time";
+import { Adresse, coronaInfo, Kontaktdaten, Kunde, Raum, Tisch, Tischgruppe} from '../models/schemas'
 /**
  * @param {import('knex')} knex
  */
-exports.seed = async (knex) => {
+exports.seed = async (knex : Knex) => {
   // Deletes ALL existing entries
-  //await Promise.all(Object.values(tableNames).map((name) => knex(name).del()));
-  const adresse1 = {
-    strasse: "Hauptstrasse",
-    Hausnummer: "2",
-    zipcode: "1234",
-    stadt: "Gummersbach",
-  };
-  const raum1 = {
-    Name: "Hauptraum",
-    Ausenbereich: 0,
+  await Promise.all(Object.values(tableNames).map((name) => knex(name).del()));
+  const raum1 : Raum = {
+    max_Anzahl_Personen:0,
+    Name: 'Hauptraum',
+    Ausenbereich: true,
     Flaeche_in_m2: 21,
   };
-  const coronaInfo1 = {
+  const raum2 : Raum = {
+    max_Anzahl_Personen:0,
+    Name: 'Nebenraum',
+    Ausenbereich: true,
+    Flaeche_in_m2: 21,
+  };
+  const now = new Date()
+
+  const coronaInfo1 : coronaInfo = {
+    // we need YYYY-MM-DD HH:MM:SS
+    Datum: date.format(now,'YYYY/MM/DD HH:mm:ss'),
     momentane_Inzidenz: 20,
     maxAnzahlPersonnen_pro_qm: 100,
   };
+  
 
-  const kundentype1 = {
-    hatReserviert: 1,
+  
+
+  const [raumId1,_] = await knex(tableNames.raum)
+  .insert([raum1,raum2])
+  .returning('id');
+
+
+  await knex(tableNames.coronaInfo).insert(coronaInfo1);
+  
+  const tischgruppe1 : Tischgruppe = {
+    Name:'TischgruppeAlpha',
+    Raum_id: raumId1,
+  };
+  const tischgruppe2 : Tischgruppe = {
+    Name:'Tischgruppeomega',
+    Raum_id: raumId1+1,
   };
 
-  const adresse_id1 = await knex(tableNames.adresse)
-    .insert(adresse1)
-    .returning("id");
-  const raum_id1 = await knex(tableNames.raum).insert(raum1).returning("id");
-  const _cid = await knex(tableNames.coronaInfo).insert(coronaInfo1);
+  
+  const [tischgruppeId1,tischgruppeId2] = await knex(tableNames.tischgruppe)
+  .insert([tischgruppe1,tischgruppe2])
+  .returning('id');
 
-  const kundentype_id1 = await knex(tableNames.kundentyp)
-    .insert(kundentype1)
-    .returning("id");
+  const tisch1 :Tisch = {
+    anzahl_plaetze:2,
+    Tischgruppe_id:tischgruppeId1
+  }
+  const tisch2 : Tisch = {
+    anzahl_plaetze:23,
+    Tischgruppe_id: tischgruppeId1+1
+  }
+  const [tischId1,tischId2] = await knex(tableNames.tisch)
+  .insert([tisch1,tisch2])
+  .returning('id');
 
-  const tischgruppe1 = {
-    Anzahl_Tische: 2,
-    Raum_id: raum_id1,
+  const adresse1 : Adresse = {
+    strasse: 'Hauptstrasse',
+    Hausnummer: '2',
+    zipcode: '1234',
+    stadt: 'Gummersbach',
   };
-  const kontaktdaten1 = {
-    Adresse_id: adresse_id1,
+  const adresse2 : Adresse = {
+    strasse: 'Hauptstrasse',
+    Hausnummer: '2',
+    zipcode: '1234',
+    stadt: 'Gummersbach',
+  };
+  const [adresseId1,adresseId2] = await knex(tableNames.adresse)
+  .insert([adresse1,adresse2])
+  .returning('id');
+
+  const kontaktdaten1 : Kontaktdaten = {
+    "E-mail":'sample@test.de',
+    Telefonnummer:23123213,
+    Adresse_id: adresseId1,
+  };
+  
+  const kontaktdaten2 : Kontaktdaten = {
+    "E-mail":'sample@test.de',
+    Telefonnummer:23123213,
+    Adresse_id: adresseId1,
   };
 
-  const Kontaktdaten_id1 = await knex(tableNames.kontaktdaten)
-    .insert(kontaktdaten1)
-    .returning("id");
-
-  const kunde1 = {
-    name: "Marc",
-    Kontaktdaten_id: Kontaktdaten_id1,
-    Kundentyp_id: kundentype_id1,
-  };
-  const kunde2 = {
-    name: "Edgar",
-    Kontaktdaten_id: Kontaktdaten_id1,
-    Kundentyp_id: kundentype_id1,
-  };
-  const kunde3 = {
-    name: "Maik",
-    Kontaktdaten_id: Kontaktdaten_id1,
-    Kundentyp_id: kundentype_id1,
+  const kontaktdaten3 : Kontaktdaten = {
+    "E-mail":'sample@test.de',
+    Telefonnummer:23123213,
+    Adresse_id: adresseId1+1,
   };
 
-  const kunde_id1 = await knex(tableNames.kunde).insert(kunde1).returning("id");
-  const kunde_id2 = await knex(tableNames.kunde).insert(kunde2).returning("id");
-  const kunde_id3 = await knex(tableNames.kunde).insert(kunde3).returning("id");
+  const [kontaktdatenId1,kontaktdatenId2,kontaktdatenId3] = await knex<Kontaktdaten>(tableNames.kontaktdaten)
+  .insert([kontaktdaten1,kontaktdaten2,kontaktdaten3])
+  .returning('id');
+  
+  const kunde1 : Kunde = {
+    vorname: 'Marc',
+    nachname: 'Mustermann',
+    alter: 21,
+    Kontaktdaten_id: kontaktdatenId1,
+  };
+  const kunde2 : Kunde = {
+    vorname: 'Edgar',
+    nachname: 'Mustermann',
+    alter: 21,    
+    Kontaktdaten_id: kontaktdatenId1+1,
+  };
+  const kunde3 : Kunde = {
+    vorname: 'Maik',
+    nachname: 'Mustermann',
+    alter: 21,    
+    Kontaktdaten_id: kontaktdatenId1+2,
+  };
+  
+  const [kunde_id1,kunde_id2,kunde_id3] = await knex(tableNames.kunde)
+  .insert([kunde1,kunde2,kunde3])
+  .returning('id');
 };
