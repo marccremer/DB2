@@ -10,6 +10,7 @@ exports.up = async (knex) => {
     table.increments().notNullable();
     table.string('Name', 40).notNullable();
     table.boolean('Ausenbereich');
+    table.integer('max_Anzahl_Personen');
     table.float('Flaeche_in_m2').notNullable();
   });
 
