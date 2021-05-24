@@ -11,6 +11,18 @@ exports.up = async (knex) => {
   const selectstatement = await knex(tableNames.kunde)
     .where('name', 'like', `M%`).toSQL()
   console.log(selectstatement);
+  await knex.raw(`
+  CREATE VIEW aktuelleKunden AS 
+  SELECT Reservierung.Datum, Reservierung.Kunde_id, Kunde.name, Kunde.id
+  FROM Kunde INNER JOIN Reservierung ON Reservierung.Kunde_id = Kunde.id
+  WHERE Reservierung.Datum = CURDATE();`
+   )
+
+  await knex.raw(`
+  CREATE VIEW kundenAnwesenheit AS 
+  SELECT Reservierung.Datum, Reservierung.Kunde_id, Kunde.name, Kunde.id
+  FROM Kunde INNER JOIN Reservierung ON Reservierung.Kunde_id = Kunde.id;`
+   )
   await knex.raw(`create view ${viewNames.sampleview} as ${selectstatement.sql}`, selectstatement.bindings)
 };
 
