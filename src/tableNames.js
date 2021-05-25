@@ -1,12 +1,14 @@
 module.exports = {
   raum: 'Raum',
   tischgruppe: 'Tischgruppe',
-  tisch:'Tisch',
+  tisch: 'Tisch',
   reservierung: 'Reservierung',
-  gebuchterTisch: 'gebuchterTisch',
+  gebuchterTisch: 'Tischreservierung',
+  begleiter: 'Begleiter',
+  teilnehmer: 'Teilnehmer',
+  reservierer: 'Reservierer',
   kunde: 'Kunde',
-  kundentyp: 'Kundentyp',
   kontaktdaten: 'Kontaktdaten',
   adresse: 'Adresse',
-  coronaInfo:'CoronaInfo'
+  coronaInfo: 'CoronaInfo',
 };

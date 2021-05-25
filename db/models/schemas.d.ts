@@ -1,49 +1,83 @@
-type Raum = {
+/* eslint-disable */
+//outdated as of 24.05.2021
+
+interface Raum  {
   Name: string;
-  Ausenbereich: number;
+  Ausenbereich: boolean;
+  max_Anzahl_Personen:number;
   Flaeche_in_m2: number;
 }
 
-type Tischgruppe = {
-  Anzahl_Tische:number;
+interface Tischgruppe  {
+  Name: string;
   Raum_id: number;
 }
-type Tisch = {
+interface Tisch  {
+  anzahl_plaetze:number;
   Tischgruppe_id:number;
 }
-type Reservierung = {
-  Datum: string;
-  Kunde_id: number;
+interface Reservierung  {
+  Datumzeit: string;
+  deleted: string;
 }
 
-type GebuchterTisch = {
+interface Tischreservierung  {
   Tisch_id:number;
   reservierung_id:number;
 }
 
-type Kunde = {
-  name: string;
-  Kontaktdaten_id: number;
-  Kundentyp_id : number;
-}
-type Kundentyp = {
-  hatReserviert: Boolean | number,
-}
- 
-type Kontaktdaten = {
-  Adresse_id: number;
+interface Teilnehmer {
+  Reservierungs_id:number;
+  Reservierer_id:number;
+  Begleiter_id:number;
 }
 
-type Adresse = {
+interface Begleiter  {
+  Kunden_id:number;
+}
+
+interface Reservierer  {
+  Kunden_id:number;
+  Kreditkartennummer:number;
+}
+
+interface Kunde {
+  nachname: string;
+  vorname:string;
+  alter: number;
+  Kontaktdaten_id: number;
+}
+
+interface Kontaktdaten  {
+  Adresse_id:number;
+  'E-mail':String;
+  Telefonnummer:number;
+}
+
+interface Adresse  {
   strasse: string;
   Hausnummer: string;
   stadt: string;
   zipcode: string;
 }
 
-type coronaInfo = {
+interface coronaInfo  {
   momentane_Inzidenz: number;
   maxAnzahlPersonnen_pro_qm: number;
   Datum: string;
 }
- 
+
+export {
+  Raum,
+  Tischgruppe,
+  Tisch,
+  Reservierung,
+  Tischreservierung,
+  Teilnehmer,
+  Begleiter,
+  Reservierer,
+  Kunde,
+  Kontaktdaten,
+  Adresse,
+  coronaInfo,
+}
