@@ -83,6 +83,33 @@ exports.up = async (knex) => { return
       END IF;
       END;`)
 
+    
+
+        await knex.raw(
+
+    
+          `
+          
+          DELIMITER // 
+          CREATE PROCEDURE rebooking(newDate DATE, bookingID INT)
+          BEGIN 
+          DECLARE v_date DATE;
+          SELECT Datum INTO v_date FROM Reservierung WHERE id = bookingID;
+          IF v_date = CURDATE() AND v_date < newDate THEN
+              UPDATE Reservierung
+              SET Datum  = newDate
+              WHERE id = bookingID;
+          ELSE 
+          SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Umbuchung nur für den Folgetag möglich!';
+
+          
+          END IF;    
+      
+          END // 
+          DELIMITER ;
+          `
+        );
+
 };
 
 exports.down = async (knex) => {

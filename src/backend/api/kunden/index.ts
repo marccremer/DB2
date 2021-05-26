@@ -20,9 +20,10 @@ const router = express.Router({
 // Spalten in der tabelle
 interface Kunde {
   id?: number;
-  name: string;
+  nachname: string;
+  vorname:string;
+  alter: number;
   Kontaktdaten_id: number;
-  Kundentyp_id: number;
 }
 
 // get all
@@ -40,7 +41,7 @@ router.get("/", async (req, res, next) => {
 //get 1 by id
 router.get("/:kundenid", async (req, res, next) => {
   try {
-    let id = req.params.kundenid;
+    const id = req.params.kundenid;
     // TODO: savety check if id is a Integer
     db<Kunde>("Kunde")
       .select(db.raw("*"))
@@ -57,7 +58,7 @@ router.get("/:kundenid", async (req, res, next) => {
 // create 1
 router.post("/", async (req, res, next) => {
   try {
-    let newItem: Kunde = req.body;
+    const newItem: Kunde = req.body;
     db<Kunde>("Kunde")
       .insert(newItem)
       .then((result) => res.json(result))
