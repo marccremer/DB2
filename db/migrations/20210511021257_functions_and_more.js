@@ -171,7 +171,58 @@ END ;
             DELIMITER ;
             `
           );
+ 
+
         
+        await knew.raw(`
+
+        CREATE TRIGGER maxAnzahlPersonen
+        AFTER INSERT ON CoronaInfo FOR EACH ROW BEGIN
+    
+    
+            DECLARE running INT DEFAULT TRUE;
+            DECLARE RAUMID INT;
+            DECLARE FLAECHE FLOAT;
+    
+            DECLARE CURSOR1 CURSOR FOR SELECT id , Flaeche_in_m2 FROM Raum ;
+            DECLARE CONTINUE HANDLER FOR NOT FOUND SET running = FALSE;
+    
+            OPEN CURSOR1;
+    
+            WHILE running DO
+                FETCH CURSOR1 INTO RAUMID , FLAECHE;
+                UPDATE Raum
+                    SET max_Anzahl_Personen = FLOOR(FLAECHE * NEW.maxAnzahlPersonnen_pro_qm)
+                    WHERE id = RAUMID;
+            END WHILE ;
+    
+            CLOSE CURSOR1;
+    
+        END;
+        `)
+        
+        await knex.raw(`
+        CREATE PROCEDURE BegleiterHinzufuegen(IN ReservierungsId INT , IN BegleiterId INT  )
+          BEGIN
+
+          IF BegleiterId NOT IN
+            (SELECT id FROM Kunde
+            WHERE id = BegleiterId) THEN
+              SIGNAL SQLSTATE '20001' SET MESSAGE_TEXT = 'BEGLEITER DOES NOT EXISTENT';
+          ELSEIF ReservierungsId NOT IN
+          (SELECT id FROM Reservierung
+          WHERE id = ReservierungsId) THEN
+              SIGNAL SQLSTATE '20002' SET MESSAGE_TEXT = 'RESERVIERUNG DOES NOT EXISTENT';
+          ELSE
+              INSERT Begleiter(kunde_id, reservierung_id) VALUES (
+                                                                  BegleiterId,
+                                                                  Reservierungsid
+                                                                );
+          END IF;
+
+        END;
+        `)
+
 
 };
 
