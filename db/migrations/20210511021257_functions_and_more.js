@@ -19,7 +19,9 @@ BEGIN
 END ;
     `
   );
-  
+
+
+  // setze storniert auf 1 in alles reservierungen die tisch plätze reduziert bekommen
   await knex.raw(`
   create trigger storniere
       before update
