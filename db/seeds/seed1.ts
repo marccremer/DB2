@@ -9,7 +9,7 @@ exports.seed = async (knex : Knex) => {
   // Deletes ALL existing entries
   await Promise.all(Object.values(tableNames).map((name) => knex(name).del()));
   const raum1 : Raum = {
-    max_Anzahl_Personen:0,
+    max_Anzahl_Personen:20,
     Name: 'Hauptraum',
     Ausenbereich: true,
     Flaeche_in_m2: 21,
@@ -19,6 +19,7 @@ exports.seed = async (knex : Knex) => {
     Name: 'Nebenraum',
     Ausenbereich: true,
     Flaeche_in_m2: 21,
+
   };
   const now = new Date()
 

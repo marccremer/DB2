@@ -1,7 +1,25 @@
 /**
  * @param {import('knex')} knex
  */
-exports.up = async (knex) => { return 
+ exports.up = async (knex) => { 
+  await knex.raw(
+    `
+   
+    CREATE PROCEDURE rebooking(IN newDate date, IN bookingID int)
+BEGIN
+    IF CURDATE() <= newDate THEN
+        UPDATE Reservierung
+        SET Datumszeit = newDate
+        WHERE id = bookingID;
+    ELSE
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Umbuchung nur für den Folgetag möglich!';
+
+    END IF;
+
+END ;
+    `
+  );
+  return 
   await knex.raw('DROP FUNCTION IF EXISTS Hello');
   await knex.raw('DROP FUNCTION IF EXISTS isEligible');
   await knex.raw(
@@ -83,32 +101,77 @@ exports.up = async (knex) => { return
       END IF;
       END;`)
 
-    
+
+      await knex.raw(
+
+        `CREATE FUNCTION gesamtanzahl_Plaetze (raumId INT) 
+        RETURNS INT;
+        BEGIN 
+        DECLARE v_maxAnzahlPlaetze INT;
+        
+        Select SUM(anzahl_plaetze) INTO v_maxAnzahlPlaetze  from Raum join Tischgruppe T 
+        on Raum.id = T.Raum_id join Tisch T2 on T.id = T2.Tischgruppe_id;
+        RETURN v_maxAnzahlPlaetze;
+        
+        
+        ` );
+
 
         await knex.raw(
 
-    
           `
-          
-          DELIMITER // 
-          CREATE PROCEDURE rebooking(newDate DATE, bookingID INT)
-          BEGIN 
-          DECLARE v_date DATE;
-          SELECT Datum INTO v_date FROM Reservierung WHERE id = bookingID;
-          IF v_date = CURDATE() AND v_date < newDate THEN
-              UPDATE Reservierung
-              SET Datum  = newDate
-              WHERE id = bookingID;
-          ELSE 
-          SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Umbuchung nur für den Folgetag möglich!';
+          DELIMITER //
+          CREATE TRIGGER reduzierung_plaetze
+          BEFORE UPDATE ON Raum
+          FOR EACH ROW
+          myblock:BEGIN
+          DECLARE v_currAnzahlPlaetze INT;
+          DECLARE v_raumId INT;
+          DECLARE c_plaetze INT;
+          DECLARE c_id INT;
+          DECLARE done INT DEFAULT FALSE;
+          DECLARE mycursor CURSOR FOR SELECT T2.id,T2.anzahl_plaetze from Raum join Tischgruppe T on Raum.id = T.Raum_id join Tisch T2 on T.id = T2.Tischgruppe_id;
+          DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+          SET v_raumId = NEW.id;
+          set v_currAnzahlPlaetze = gesamtAnzahlTisch(v_raumId);
+          open mycursor;
+          readloop: LOOP
+          fetch mycursor into c_id,c_plaetze;
+          If done or v_currAnzahlPlaetze <= NEW.max_Anzahl_Personen then
+              Leave readloop;
+          end if;
+          Select anzahl_plaetze into tmp_pltz from Tisch where Tisch.id =c_id;
+          UPDATE Tisch set anzahl_plaetze = 0 where id = c_id;
+          Set v_currAnzahlPlaetze = v_currAnzahlPlaetze - tmp_pltz;
+      end loop ;
 
-          
-          END IF;    
-      
-          END // 
-          DELIMITER ;
-          `
-        );
+
+          `);
+
+          await knex.raw(
+
+    
+            `
+            
+            DELIMITER // 
+            CREATE PROCEDURE rebooking(newDate DATE, bookingID INT)
+            BEGIN 
+            DECLARE v_date DATE;
+            SELECT Datum INTO v_date FROM Reservierung WHERE id = bookingID;
+            IF v_date = CURDATE() AND v_date < newDate THEN
+                UPDATE Reservierung
+                SET Datum  = newDate
+                WHERE id = bookingID;
+            ELSE 
+            SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Umbuchung nur für den Folgetag möglich!';
+            
+            END IF;    
+        
+            END // 
+            DELIMITER ;
+            `
+          );
+        
 
 };
 
