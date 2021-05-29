@@ -17,8 +17,10 @@ interface Tisch  {
   Tischgruppe_id:number;
 }
 interface Reservierung  {
-  Datumzeit: string;
-  deleted: string;
+  Datumszeit: string;
+  deleted?: boolean;
+  storniert?: boolean;
+  reservierer_id:number;
 }
 
 interface Tischreservierung  {

@@ -11,7 +11,7 @@ exports.up = async (knex) => {
     table.datetime('Datumszeit').notNullable();
     table.boolean('deleted').defaultTo(false);
     table.boolean('storniert').defaultTo(false);
-    references(table,tableNames.kunde,true,"reservierer_id");
+    references(table,tableNames.kunde,true,"reservierer");
   });
 
   await knex.schema.createTable(tableNames.begleiter, (table) => {
@@ -22,7 +22,6 @@ exports.up = async (knex) => {
   await knex.schema.createTable(tableNames.gebuchterTisch, (table) => {
     references(table, tableNames.tisch);
     references(table, tableNames.reservierung, true, 'reservierung');
-    table.primary('reservierung_id');
   });
 
 };

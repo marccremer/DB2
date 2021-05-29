@@ -1,7 +1,7 @@
 import Knex from 'knex';
 import tableNames from '../../src/tableNames';
 import * as date from "date-and-time";
-import { Adresse, coronaInfo, Kontaktdaten, Kunde, Raum, Tisch, Tischgruppe} from '../models/schemas'
+import { Adresse, coronaInfo, Kontaktdaten, Kunde, Raum, Reservierung, Tisch, Tischgruppe, Tischreservierung} from '../models/schemas'
 /**
  * @param {import('knex')} knex
  */
@@ -21,11 +21,11 @@ exports.seed = async (knex : Knex) => {
     Flaeche_in_m2: 21,
 
   };
-  const now = new Date()
+  const now = date.format(new Date(),'YYYY/MM/DD HH:mm:ss')
 
   const coronaInfo1 : coronaInfo = {
     // we need YYYY-MM-DD HH:MM:SS
-    Datum: date.format(now,'YYYY/MM/DD HH:mm:ss'),
+    Datum: now,
     momentane_Inzidenz: 20,
     maxAnzahlPersonnen_pro_qm: 100,
   };
@@ -62,9 +62,14 @@ exports.seed = async (knex : Knex) => {
     anzahl_plaetze:23,
     Tischgruppe_id: tischgruppeId1+1
   }
-  const [tischId1,tischId2] = await knex(tableNames.tisch)
-  .insert([tisch1,tisch2])
+  const [tischId1] = await knex(tableNames.tisch)
+  .insert([tisch1])
   .returning('id');
+
+  const [tischId2] = await knex(tableNames.tisch)
+  .insert([tisch2])
+  .returning('id');
+
 
   const adresse1 : Adresse = {
     strasse: 'Hauptstrasse',
@@ -125,5 +130,27 @@ exports.seed = async (knex : Knex) => {
   
   const [kunde_id1,kunde_id2,kunde_id3] = await knex(tableNames.kunde)
   .insert([kunde1,kunde2,kunde3])
+  .returning('id');
+
+
+  const reservierung1 : Reservierung = {
+    Datumszeit: now,
+    reservierer_id:kunde_id1
+  }
+
+  const [res_id] = await knex(tableNames.reservierung)
+  .insert(reservierung1)
+  .returning('id');
+
+  const gebuchterTisch1 : Tischreservierung = {
+    Tisch_id:tischId1,
+    reservierung_id:res_id,
+  }
+  const gebuchterTisch2 : Tischreservierung = {
+    Tisch_id:tischId2,
+    reservierung_id:res_id,
+  }
+  const [gebuchterTischID1,gebuchterTischID2] = await knex(tableNames.gebuchterTisch)
+  .insert([gebuchterTisch1,gebuchterTisch2])
   .returning('id');
 };
