@@ -10,6 +10,7 @@ exports.up = async (knex) => {
     table.increments().notNullable();
     table.datetime('Datumszeit').notNullable();
     table.boolean('deleted').defaultTo(false);
+    table.boolean('storniert').defaultTo(false);
     references(table,tableNames.kunde,true,"reservierer_id");
   });
 
