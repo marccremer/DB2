@@ -199,7 +199,7 @@ END ;
             CLOSE CURSOR1;
     
         END;
-        `)
+        `);
         
         await knex.raw(`
         CREATE PROCEDURE BegleiterHinzufuegen(IN ReservierungsId INT , IN BegleiterId INT  )
@@ -221,7 +221,7 @@ END ;
           END IF;
 
         END;
-        `)
+        `);
 
 
 };
