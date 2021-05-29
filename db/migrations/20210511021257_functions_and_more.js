@@ -1,17 +1,40 @@
 /**
  * @param {import('knex')} knex
  */
-exports.up = async (knex) => { return 
-  await knex.raw('DROP FUNCTION IF EXISTS Hello');
-  await knex.raw('DROP FUNCTION IF EXISTS isEligible');
-  await knex.raw(
-    `create
-      function Hello() returns char(36)
-        BEGIN
-          RETURN 'Hello';
-        END;
-    `);
+exports.up = async (knex) => {  
 
+  await knex.raw(`
+    create trigger storniere
+        before update
+        on Tisch
+        for each row
+
+    main:begin
+        declare finished integer default 0;
+        declare r_id integer;
+        declare reservierungen_c cursor for select id
+                                            from Tischreservierung t
+                                                    join Reservierung R on t.reservierung_id = R.id
+                                            where t.Tisch_id = OLD.id;
+
+        DECLARE CONTINUE HANDLER FOR NOT FOUND SET finished = 1;
+        if old.anzahl_plaetze <= new.anzahl_plaetze then
+            Leave main;
+        end if ;
+        open reservierungen_c;
+        readloop:
+        LOOP
+            if finished = 1 then
+                Leave readloop;
+            end if;
+            fetch reservierungen_c into r_id;
+            update Reservierung set storniert = 1 where id = r_id;
+        end loop readloop;
+
+        close reservierungen_c;
+    end ;
+      `)
+  return
   await knex.raw(
       `
       CREATE OR REPLACE PROCEDURE maxAnzahlPersonen
