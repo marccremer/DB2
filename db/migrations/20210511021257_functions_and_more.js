@@ -106,14 +106,14 @@ END ;
     #SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Bis hier hin kommt er';
 
     #Alle Reservierungen, die dem neuen Begleiter zugeordnet sind
-    OPEN cur2;
-    read_loop2: LOOP
-        FETCH cur2 INTO idReservierung2;
-        SELECT COUNT(Datumszeit) INTO zaehler FROM Reservierung WHERE id = idReservierung2;
-        IF zaehler > 0 THEN
-            SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Dieser Begleiter hat bereits eine Reservierung an diesem Datum';
-        END IF;
-    END LOOP;
+    #OPEN cur2;
+    #read_loop2: LOOP
+        #FETCH cur2 INTO idReservierung2;
+        #SELECT COUNT(Datumszeit) INTO zaehler FROM Reservierung WHERE id = idReservierung2;
+        #IF zaehler > 0 THEN
+            #SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Dieser Begleiter hat bereits eine Reservierung an diesem Datum';
+        #END IF;
+    #END LOOP;
     END;  
     `)
 
