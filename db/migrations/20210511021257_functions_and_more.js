@@ -231,6 +231,28 @@ END ;
     END;
     `)
 
+    await knex.raw(`
+    CREATE PROCEDURE BegleiterHinzufuegen(IN ReservierungsId INT , IN BegleiterId INT  )
+      BEGIN
+
+      IF BegleiterId NOT IN
+        (SELECT id FROM Kunde
+        WHERE id = BegleiterId) THEN
+          SIGNAL SQLSTATE '20001' SET MESSAGE_TEXT = 'BEGLEITER DOES NOT EXISTENT';
+      ELSEIF ReservierungsId NOT IN
+      (SELECT id FROM Reservierung
+      WHERE id = ReservierungsId) THEN
+          SIGNAL SQLSTATE '20002' SET MESSAGE_TEXT = 'RESERVIERUNG DOES NOT EXISTENT';
+      ELSE
+          INSERT Begleiter(kunde_id, reservierung_id) VALUES (
+                                                              BegleiterId,
+                                                              Reservierungsid
+                                                            );
+      END IF;
+
+    END;
+    `);
+
     return
   await knex.raw(`
   create trigger checkInsertReservierer
@@ -425,27 +447,7 @@ return
         
         
         
-        await knex.raw(`
-        CREATE PROCEDURE BegleiterHinzufuegen(IN ReservierungsId INT , IN BegleiterId INT  )
-          BEGIN
 
-          IF BegleiterId NOT IN
-            (SELECT id FROM Kunde
-            WHERE id = BegleiterId) THEN
-              SIGNAL SQLSTATE '20001' SET MESSAGE_TEXT = 'BEGLEITER DOES NOT EXISTENT';
-          ELSEIF ReservierungsId NOT IN
-          (SELECT id FROM Reservierung
-          WHERE id = ReservierungsId) THEN
-              SIGNAL SQLSTATE '20002' SET MESSAGE_TEXT = 'RESERVIERUNG DOES NOT EXISTENT';
-          ELSE
-              INSERT Begleiter(kunde_id, reservierung_id) VALUES (
-                                                                  BegleiterId,
-                                                                  Reservierungsid
-                                                                );
-          END IF;
-
-        END;
-        `);
 
 
 };
