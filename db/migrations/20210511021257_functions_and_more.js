@@ -309,6 +309,21 @@ return
       DELIMITER ;
       `);
 
+      await knex.raw(
+        `
+        DELIMITER $
+        CREATE TRIGGER checkInsertTeilnehmerInvalidKunde BEFORE INSERT ON Reservierung FOR EACH ROW
+          BEGIN 
+              DECLARE kundenid INT;
+              SET kundenid = 0;
+              SELECT COUNT(Kunde_id) INTO kundenid FROM Reservierung WHERE Kunde_id = NEW.Kunde_id AND Datum = NEW.Datum
+              IF kundenid = 0 THEN
+                SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Der gewünschte Kunde ist nicht zu finden';
+              END IF;
+          END;
+        DELIMITER ;
+        `);
+
   await knew.raw(
     `
     DELIMITER $
