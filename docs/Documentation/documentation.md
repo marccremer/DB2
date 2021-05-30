@@ -22,7 +22,7 @@ Für die Realisierung unserer Idee benötigen wir einerseits die Kundendaten und
 
 ## ERM-Diagramm
 
-![ERM Diagramm2_30052021.png](images/ERM Diagramm2_30052021.png)
+![ERM Diagramm2_30052021](images/ERM Diagramm2_30052021.png)
 
 ---
 
