@@ -86,7 +86,7 @@ END ;
       return result;
   END ;
   `)    
-return
+
     await knex.raw(`
     create
     function maxAnzahlPersonen(IN idRaum int, IN datum1 int) RETURNS INTEGER
@@ -102,6 +102,77 @@ return
       END;
     `  
     )
+
+    await knex.raw(`
+    
+CREATE FUNCTION gesamtanzahl_Plaetze(raumId INT)
+    RETURNS INT
+BEGIN
+    DECLARE v_maxAnzahlPlaetze INT;
+
+    Select SUM(anzahl_plaetze)
+    INTO v_maxAnzahlPlaetze
+    from Raum
+             join Tischgruppe T
+                  on Raum.id = T.Raum_id
+             join Tisch T2 on T.id = T2.Tischgruppe_id
+    WHERE Raum.id = raumId;
+    RETURN v_maxAnzahlPlaetze;
+
+END ; 
+    
+    `)
+
+    await knex.raw(`
+    CREATE TRIGGER reduzierung_plaetze
+    BEFORE UPDATE
+    ON Raum
+    FOR EACH ROW
+BEGIN
+    DECLARE v_currAnzahlPlaetze INT;
+    DECLARE v_raumId INT;
+    DECLARE c_plaetze INT;
+    DECLARE v_tischId INT;
+    DECLARE tmp_pltz INT;
+    DECLARE done INT DEFAULT FALSE;
+    DECLARE mycursor CURSOR FOR SELECT T2.id, T2.anzahl_plaetze
+                                from Raum
+                                         join Tischgruppe T on Raum.id = T.Raum_id
+                                         join Tisch T2 on T.id = T2.Tischgruppe_id;
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+    SET v_raumId = NEW.id;
+    SET v_currAnzahlPlaetze = gesamtanzahl_Plaetze(v_raumId);
+    open mycursor;
+    readloop:
+    LOOP
+        fetch mycursor into v_tischId,c_plaetze;
+        IF done or v_currAnzahlPlaetze <= NEW.max_Anzahl_Personen then
+            Leave readloop;
+        END IF;
+
+        Select anzahl_plaetze into tmp_pltz from Tisch where Tisch.id = v_tischId;
+        UPDATE Tisch set anzahl_plaetze = 0 where id = v_tischId;
+        IF tmp_pltz >= v_currAnzahlPlaetze THEN
+            UPDATE Tisch
+            SET anzahl_plaetze = NEW.max_Anzahl_Personen
+            WHERE id = v_tischId;
+
+        SET v_currAnzahlPlaetze = NEW.max_Anzahl_Personen;
+        ELSE
+            UPDATE Tisch set anzahl_plaetze = 0 where id = v_tischId;
+        END IF;
+
+        Set v_currAnzahlPlaetze = v_currAnzahlPlaetze - tmp_pltz; -- gesamtanzahl aller Tische im Raum - anzahl plaetze
+    END loop;
+END ;
+    
+    `)
+
+
+
+
+
+    return
 
     await knew.raw(`
     create trigger checkInsertBegleiter
