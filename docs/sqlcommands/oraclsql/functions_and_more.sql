@@ -209,11 +209,9 @@ RETURN number
     end ;
 
     CREATE OR REPLACE TRIGGER checkInsertTeilnehmerInvalidKunde BEFORE INSERT ON Reservierung FOR EACH ROW
-    BEGIN 
-        kundenid NUMBER(10);
-        kundenid := 0;
-        -- SQLINES LICENSE FOR EVALUATION USE ONLY
-        SELECT COUNT(Kunde_id) INTO kundenid FROM Reservierung WHERE Kunde_id = NEW.Kunde_id AND Datum = NEW.Datum
+    BEGIN
+        kundenid NUMBER(10) DEFAULT 0;
+    SELECT COUNT(id) INTO kundenid FROM Reservierung WHERE id = NEW.id AND Datumszeit = NEW.Datumszeit;
         IF kundenid = 0 THEN
           RAISE_APPLICATION_ERROR MESSAGE_TEXT := 'Der gewünschte Kunde ist nicht zu finden';
         END IF;
