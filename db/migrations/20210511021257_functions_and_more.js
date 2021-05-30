@@ -12,6 +12,7 @@
   await knex.raw( 'DROP TRIGGER IF EXISTS checkInsertBegleiter');
   await knex.raw( 'DROP PROCEDURE IF EXISTS reservierungAufTischeVerteilen');
   await knex.raw( 'DROP FUNCTION IF EXISTS verfügbarkeitAnPlätzenFürDatum');
+  await knex.raw( 'DROP PROCEDURE IF EXISTS BegleiterHinzufuegen');
 
   
   await knex.raw(`
