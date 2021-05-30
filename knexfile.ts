@@ -13,7 +13,7 @@ module.exports = {
       database: process.env.DB_REMOTE_NAME,
     },
     seeds: {
-      directory: './db/seeds',
+      directory: './db/seedsoracle',
     },
     migrations: {
       directory: './db/migrations',

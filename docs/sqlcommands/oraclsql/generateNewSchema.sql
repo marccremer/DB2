@@ -1,7 +1,7 @@
 --Tabelle Raum
 create table Raum
 (
-    id                  number(10) check (id > 0) not null primary key,
+   ID                 number(10) check (id > 0) not null primary key,
     Name                varchar2(40)  not null,
     Ausenbereich        char(1),
     max_Anzahl_Personen number(10),
@@ -22,7 +22,7 @@ end;
 --Tabelle Adresse
 create table Adresse
 (
-    id         number(10) check (id > 0) not null primary key,
+   ID        number(10) check (id > 0) not null primary key,
     strasse    varchar2(50)  not null,
     Hausnummer varchar2(12),
     stadt      varchar2(50)  not null,
@@ -45,9 +45,9 @@ end;
 -- SQLINES LICENSE FOR EVALUATION USE ONLY
 create table Kontaktdaten
 (
-    id            number(10) check (id > 0) not null primary key,
+   ID           number(10) check (id > 0) not null primary key,
     Adresse_id    number(10) check (Adresse_id > 0) not null,
-    "E-Mail"       varchar(254),
+    EMAIL       varchar(254),
     Telefonnummer number(10)
 );
 
@@ -69,7 +69,7 @@ alter table Kontaktdaten
 -- SQLINES LICENSE FOR EVALUATION USE ONLY
 create table CoronaInfo
 (
-    id                        number(10) check (id > 0) not null primary key,
+   ID                       number(10) check (id > 0) not null primary key,
     momentane_Inzidenz        number(10)          not null,
     maxAnzahlPersonnen_pro_qm number(10),
     Datum                     timestamp(0)
@@ -90,7 +90,7 @@ end;
 -- SQLINES LICENSE FOR EVALUATION USE ONLY
 create table Tischgruppe
 (
-    id      number(10) check (id > 0) not null primary key,
+   ID     number(10) check (id > 0) not null primary key,
     Name    clob,
     Raum_id number(10) check (Raum_id > 0) not null
 );
@@ -113,7 +113,7 @@ alter table Tischgruppe
 -- SQLINES LICENSE FOR EVALUATION USE ONLY
 create table Tisch
 (
-    id             number(10) check (id > 0) not null primary key,
+   ID            number(10) check (id > 0) not null primary key,
     anzahl_plaetze number(10)          not null,
     Tischgruppe_id number(10) check (Tischgruppe_id > 0) not null
 );
@@ -136,12 +136,13 @@ alter table Tisch
 create type kunden_t as Object
 (
     ID           NUMBER,
-    "Vorname"       varchar(200),
-    "Nachname"      varchar(200),
+    Vorname        varchar(200),
+    Nachname      varchar(200),
+    ALTERKUNDE         NUMBER,
     Kontaktdaten_id number
 ) not  final;
 create type reservier_t under kunden_t
-( "Kreditkartennummer" varchar(200)) final;
+( Kreditkartennummer varchar(200)) final;
 
 
 create table reservier of reservier_t;
@@ -165,7 +166,7 @@ END;
 -- SQLINES LICENSE FOR EVALUATION USE ONLY
 create table Reservierung
 (
-    id                number(10) check (id > 0) not null primary key,
+   ID               number(10) check (id > 0) not null primary key,
     Datumszeit        timestamp(0)     not null,
     deleted           char(1) default '0',
     storniert         char(1) default '0',
@@ -224,18 +225,3 @@ alter table Tischreservierung
     add constraint tischreservierung_reservierung_id_foreign foreign key (reservierung_id) references Reservierung (id) on delete cascade;
 alter table Tischreservierung
     add constraint Tischreservierung_pkey primary key (reservierung_id, Tisch_id);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
