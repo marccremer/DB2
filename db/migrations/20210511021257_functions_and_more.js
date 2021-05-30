@@ -4,6 +4,8 @@
  exports.up = async (knex) => { 
   await knex.raw('DROP PROCEDURE IF EXISTS rebooking');
   await knex.raw('DROP FUNCTION IF EXISTS verfügbarkeit');
+  await knex.raw('DROP FUNCTION IF EXISTS maxAnzahlPersonen')
+  await knex.raw('DROP FUNCTION IF EXISTS gesamtanzahl_Plaetze')
 
   await knex.raw(
     `
@@ -89,7 +91,7 @@ END ;
 
     await knex.raw(`
     create
-    function maxAnzahlPersonen(IN idRaum int, IN datum1 int) RETURNS INTEGER
+    function maxAnzahlPersonen(idRaum int, datum1 int) RETURNS INTEGER
       BEGIN
       DECLARE maxAnzahlpQ INTEGER;
       DECLARE flaeche FLOAT;
@@ -172,55 +174,33 @@ END ;
 
 
 
-    return
 
-    await knew.raw(`
+    await knex.raw(`
     create trigger checkInsertBegleiter
-    before insert
-    on Begleiter
-    for each row
+        before insert
+        on Begleiter
+        for each row
     BEGIN
-    DECLARE idReservierung INTEGER;
-    DECLARE idReservierung2 INTEGER;
-    DECLARE idKunde INTEGER;
-    DECLARE datumReservierung DATE;
-    DECLARE zaehler INT DEFAULT 0;
+        DECLARE idReservierung INTEGER;
+        DECLARE idKunde INTEGER;
+        DECLARE datumReservierung DATE;
 
-    DECLARE cur1 CURSOR FOR SELECT Reservierung_id, Kunde_id FROM Begleiter WHERE Reservierung_id = NEW.Reservierung_id;
-    #DECLARE done INT DEFAULT 0;
-    #DECLARE done2 INT DEFAULT 0;
-    #DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
-    DECLARE cur2 CURSOR FOR SELECT * FROM (SELECT Datumszeit, id  FROM Reservierung r WHERE reservierer_id_id = 2) r JOIN Reservierung r2 ON r.Datumszeit = r2.Datumszeit;
-    #DECLARE CONTINUE HANDLER FOR NOT FOUND SET done2 = 1;
+        DECLARE cur1 CURSOR FOR SELECT Reservierung_id, Kunde_id FROM Begleiter WHERE Reservierung_id = NEW.Reservierung_id;
 
-    SELECT Datumszeit INTO datumReservierung FROM Reservierung WHERE reservierer_id_id = NEW.Reservierung_id;
-    #cursor auf alle Reservierungen mit diesem Datum
-
-    #Ein Begleiter kann nicht zweimal an der gleichen Reservierung teilnehmen -- KundenID auch noch hinzufügen
-    OPEN cur1;
-    read_loop: LOOP
-         FETCH cur1 INTO idReservierung, idKunde; #hier noch KundenID checken
-         #Durchlaufen von allen Reservierungen, an die der Begleiter teilnimmt
-         IF idReservierung = NEW.Reservierung_id AND idKunde = NEW.Kunde_id THEN
-              SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Begleiter darf nicht zweimal der gleichen Reservierung hinzugefügt werden';
-         END IF;
-    END LOOP;
-    CLOSE cur1;
-
-    #SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Bis hier hin kommt er';
-
-    #Alle Reservierungen, die dem neuen Begleiter zugeordnet sind
-    #OPEN cur2;
-    #read_loop2: LOOP
-        #FETCH cur2 INTO idReservierung2;
-        #SELECT COUNT(Datumszeit) INTO zaehler FROM Reservierung WHERE id = idReservierung2;
-        #IF zaehler > 0 THEN
-            #SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Dieser Begleiter hat bereits eine Reservierung an diesem Datum';
-        #END IF;
-    #END LOOP;
-    END;  
+        #Ein Begleiter kann nicht zweimal an der gleichen Reservierung teilnehmen -- KundenID auch noch hinzufügen
+        OPEN cur1;
+        read_loop: LOOP
+            FETCH cur1 INTO idReservierung, idKunde; #hier noch KundenID checken
+            #Durchlaufen von allen Reservierungen, an die der Begleiter teilnimmt
+            IF idReservierung = NEW.Reservierung_id AND idKunde = NEW.Kunde_id THEN
+                  SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Begleiter darf nicht zweimal der gleichen Reservierung hinzugefügt werden';
+            END IF;
+        END LOOP;
+        CLOSE cur1;
+    END;
     `)
 
+    return
   await knex.raw(`
   create trigger checkInsertReservierer
     before insert
