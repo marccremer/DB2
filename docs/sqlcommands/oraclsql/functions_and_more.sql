@@ -73,3 +73,52 @@ BEGIN
     CLOSE mycursor;
 END;
 /
+
+CREATE OR REPLACE TRIGGER maxAnzahlPersonen
+    AFTER INSERT ON CoronaInfo FOR EACH ROW
+    DECLARE
+        runs NUMBER(10) DEFAULT 1;
+        RAUMID NUMBER(10);
+        FLAECHE BINARY_DOUBLE;
+        CURSOR CURSOR1 IS SELECT ID , FLAECHE_IN_M2 FROM RAUM ;
+    BEGIN
+
+        OPEN CURSOR1;
+
+        WHILE runs = 1 LOOP
+            FETCH CURSOR1 INTO RAUMID , FLAECHE;
+            IF CURSOR1%NOTFOUND THEN runs := 0;
+            END IF;
+            UPDATE Raum
+                SET MAX_ANZAHL_PERSONEN = FLOOR(FLAECHE * :new.MAXANZAHLPERSONNEN_PRO_QM)
+                WHERE id = RAUMID;
+            IF SQL%ROWCOUNT = 0 THEN  runs := 0;
+            END IF;
+        END LOOP ;
+
+        CLOSE CURSOR1;
+
+    END;
+
+
+
+CREATE OR REPLACE PROCEDURE BegleiterHinzufuegen( ReservierungsId IN NUMBER , KundenId IN NUMBER)
+    IS
+    BEGIN
+
+        IF KundenId NOT IN
+        (SELECT ID FROM BEGLEITER
+        WHERE ID = KundenId) THEN
+            RAISE_APPLICATION_ERROR (-20001 := 'BEGLEITER DOES NOT EXISTENT');
+        ELSIF ReservierungsId NOT IN
+        (SELECT ID FROM Reservierung
+        WHERE ID = ReservierungsId) THEN
+            RAISE_APPLICATION_ERROR (-20002 , 'RESERVIERUNG DOES NOT EXISTENT');
+        ELSE
+            UPDATE BEGLEITER
+            SET  RESERVIERUNGS_ID = ReservierungsId
+            WHERE ID = KundenId;
+
+        END IF;
+
+    END;
