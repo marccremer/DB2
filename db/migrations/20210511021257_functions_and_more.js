@@ -2,6 +2,9 @@
  * @param {import('knex')} knex
  */
  exports.up = async (knex) => { 
+  await knex.raw('DROP PROCEDURE IF EXISTS rebooking');
+  await knex.raw('DROP FUNCTION IF EXISTS verfügbarkeit');
+
   await knex.raw(
     `
    
@@ -20,7 +23,7 @@ END ;
     `
   );
 
-
+  
   // setze storniert auf 1 in alles reservierungen die tisch plätze reduziert bekommen
   await knex.raw(`
   create trigger storniere
@@ -53,6 +56,36 @@ END ;
       close reservierungen_c;
   end ;
     `)
+  await knex.raw(`
+  CREATE FUNCTION verfügbarkeit(DATUM datetime) returns integer
+  BEGIN
+      declare result integer default 0;
+      declare finished integer default 0;
+      declare sum integer default 0;
+      declare r_date datetime;
+      declare reservierung_c cursor for select sum(anzahl_plaetze), R.Datumszeit
+                                        from Reservierung R
+                                                 join Tischreservierung T on R.id = T.reservierung_id
+                                                 join Tisch T2 on T2.id = T.Tisch_id
+                                        group by R.id;
+      DECLARE CONTINUE HANDLER
+          FOR NOT FOUND SET finished = 1;
+      open reservierung_c;
+      main:
+      loop
+          if finished = 1 then
+              Leave main;
+          end if;
+          fetch reservierung_c into sum,r_date;
+          insert into logs (log) values(CONCAT('Sum is:',sum,' date is:',r_date,' args is:',DATUM));
+          if r_date = DATUM then
+              set result = result + sum;
+          end if;
+      end loop main;
+      close reservierung_c;
+      return result;
+  END ;
+  `)    
 
 
 
