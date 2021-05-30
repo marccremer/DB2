@@ -274,7 +274,7 @@ BEGIN
 	END LOOP getFreienTisch;
     close curTisch;
 
-end $;
+end ;
 `)
 
 await knex.raw(`
