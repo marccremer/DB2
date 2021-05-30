@@ -86,10 +86,10 @@ END ;
       return result;
   END ;
   `)    
-
+return
     await knex.raw(`
     create
-    definer = mainUser@`%` function maxAnzahlPersonen(IN idRaum int, IN datum1 int) RETURNS INTEGER
+    function maxAnzahlPersonen(IN idRaum int, IN datum1 int) RETURNS INTEGER
       BEGIN
       DECLARE maxAnzahlpQ INTEGER;
       DECLARE flaeche FLOAT;
@@ -104,7 +104,7 @@ END ;
     )
 
     await knew.raw(`
-    create definer = mainUser@`%` trigger checkInsertBegleiter
+    create trigger checkInsertBegleiter
     before insert
     on Begleiter
     for each row
@@ -151,7 +151,7 @@ END ;
     `)
 
   await knex.raw(`
-  create definer = mainUser@`%` trigger checkInsertReservierer
+  create trigger checkInsertReservierer
     before insert
     on Reservierung
     for each row
