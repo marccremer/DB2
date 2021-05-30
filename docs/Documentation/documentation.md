@@ -22,7 +22,7 @@ Für die Realisierung unserer Idee benötigen wir einerseits die Kundendaten und
 
 ## ERM-Diagramm
 
-![ERM-Diagramm_08052021.png](images/ERM-Diagramm_08052021.png)
+![ERM Diagramm2_30052021.png](images/ERM Diagramm2_30052021.png)
 
 ---
 
@@ -36,6 +36,7 @@ Für die Realisierung unserer Idee benötigen wir einerseits die Kundendaten und
 
 Der Kunde ist der Hauptnutzer der Applikation.
 Er kann Reservierungen und Stornierungen vornehmen.
+
 #### __Admin__
 
 Der Admin ist der Administrator der Applikationen.
@@ -45,20 +46,23 @@ Er kann Stornierungen vornehmen und den Inzidenzwert eintragen.
 
 ## Funktionen und Prozeduren
 
-In der Datenbank muss häufig die maximale Anzahl an Personen pro Raum abgefragt werden. Um dies zu erleichtern erstellen wir eine Funktion, welche als Rückgabewert die maximale Anzahl an Personen pro Raum zurückgibt. Eine weitere Funktion liefert die Anzahl an noch freien Plätzen im lokal wieder.
+In der Datenbank muss häufig die maximale Anzahl an Personen pro Raum abgefragt werden. Um dies zu erleichtern erstellen wir eine Funktion, welche als Rückgabewert die maximale Anzahl an Personen pro Raum zurückgibt. Eine weitere Funktion liefert die Anzahl an noch freien Plätzen im Lokal wieder. Eine weitere Funktion gibt die Gesamtanzahl an Plätzen für einen einzelnen Raum zurück. Damit Buchungen nicht von Minderjährigen vorgenommen werden können gibt eine Funktion zurück, ob ein Kunde berechtigt ist, eine Buchung vorzunehmen. Die letzte Funktion gibt 1 zurück, wenn eine gewünschte Anzahl an Plätzen für ein bestimmtes Datum noch frei sind.
 
-Da die Hauptaufgabe, und somit eine, sich oft wiederholende Prozedur, ist die Erstellung einer neuen Reservierung. Des Weiteren soll man zu den Reservierungen Personen hinzufügen können, welches eine weitere Prozedur darstellt, die sich klar von der Reservierungs-Prozedur abgrenzt. Die dritte Prozedur ist, dass man Umbuchungen vornehmen kann.
+Da die Hauptaufgabe, und somit eine, sich oft wiederholende Prozedur, ist das hinzufügen eines Begleiters. Des Weiteren soll man eine Buchung umbuchen können. Die dritte Prozedur ist, dass die maximale Anzahl an Personen auf den aktuellen Stand gebracht wird. Eine weitere Prozedur verteilt eine Buchung auf die verfügbaren Tische auf.
 
 ---
 
 ## Trigger
 
-Damit keine Redundanten Daten in der Datenbank existieren soll bei einem Insert ein Trigger überprüfen, ob der Kunde schon an dem bestimmten Tag gebucht hat. Zudem soll ein weiterer Insert Trigger eine Fehlermeldung zurückgeben, wenn man eine Person zu einer nicht vorhandenen Buchung hinzufügen möchte. Ein weiterer Insert oder Update Trigger storniert Reservierungen, wenn eine bestimmte Inzidenzzahl überschritten wurde. Der zweite Update und Insert Trigger Reduziert die Plätze für einen Raum, wenn eine bestimmte Inzidenzzahl überschritten wurde. Wenn ein weiterer Tisch hinzugefügt wird, sorgt ein Insert Trigger dafür, dass der Datensatz maxAnzahlPersonen aktualisiert wird.
+Damit keine Redundanten Daten in der Datenbank existieren soll bei einem Insert ein Trigger überprüfen, ob der Kunde schon an dem bestimmten Tag gebucht hat. Diese Überprüfung wird sowohl für den Begleiter, als auch für den Reservierer überprüft. Zudem soll ein weiterer Insert Trigger eine Fehlermeldung zurückgeben, wenn man eine Person zu einer nicht vorhandenen Buchung hinzufügen möchte. Ein weiterer Insert oder Update Trigger storniert Reservierungen, wenn eine bestimmte Inzidenzzahl überschritten wurde. Der zweite Update und Insert Trigger Reduziert die Plätze für einen Raum, wenn eine bestimmte Inzidenzzahl überschritten wurde. Wenn eine neue Corona Meldung hinzugefügt wird, sorgt ein Insert Trigger dafür, dass der Datensatz maxAnzahlPersonen aktualisiert wird. Ein weiterer Trigger feuert vor einem Delete und setzt bei Reservierung ist_gelösscht auf true.
+
+Der In-Stead-Of Trigger feuert, sobald in der view, ein Datensatz gelöscht wird und aktualisiert die View.
 
 ---
 
 ## Views
 
 Eine sinnvolle View für die Datenbank ist eine Übersicht über die Kunden, welche aktuell im Restaurant sind. Eine weitere View ist es, eine Übersicht über die Buchungen von einem bestimmten Tag zu generieren.
+
 
 ---
