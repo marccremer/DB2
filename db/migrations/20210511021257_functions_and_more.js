@@ -4,8 +4,12 @@
  exports.up = async (knex) => { 
   await knex.raw('DROP PROCEDURE IF EXISTS rebooking');
   await knex.raw('DROP FUNCTION IF EXISTS verfügbarkeit');
-  await knex.raw('DROP FUNCTION IF EXISTS maxAnzahlPersonen')
-  await knex.raw('DROP FUNCTION IF EXISTS gesamtanzahl_Plaetze')
+  await knex.raw('DROP TRIGGER IF EXISTS reduzierung_plaetze');
+  await knex.raw('DROP TRIGGER IF EXISTS storniere');
+  await knex.raw('DROP FUNCTION IF EXISTS maxAnzahlPersonen');
+  await knex.raw('DROP FUNCTION IF EXISTS gesamtanzahl_Plaetze');
+  
+
 
   await knex.raw(
     `
