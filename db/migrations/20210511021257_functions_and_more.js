@@ -8,8 +8,36 @@
   await knex.raw('DROP TRIGGER IF EXISTS storniere');
   await knex.raw('DROP FUNCTION IF EXISTS maxAnzahlPersonen');
   await knex.raw('DROP FUNCTION IF EXISTS gesamtanzahl_Plaetze');
-  
+  await knex.raw('DROP TRIGGER IF EXISTS maxAnzahlPersonen_t');
+  await knex.raw( 'DROP TRIGGER IF EXISTS checkInsertBegleiter');
 
+  
+  await knex.raw(`
+
+  CREATE TRIGGER maxAnzahlPersonen_t
+  AFTER INSERT ON CoronaInfo FOR EACH ROW BEGIN
+
+
+      DECLARE running INT DEFAULT TRUE;
+      DECLARE RAUMID INT;
+      DECLARE FLAECHE FLOAT;
+
+      DECLARE CURSOR1 CURSOR FOR SELECT id , Flaeche_in_m2 FROM Raum ;
+      DECLARE CONTINUE HANDLER FOR NOT FOUND SET running = FALSE;
+
+      OPEN CURSOR1;
+
+      WHILE running DO
+          FETCH CURSOR1 INTO RAUMID , FLAECHE;
+          UPDATE Raum
+              SET max_Anzahl_Personen = FLOOR(FLAECHE * NEW.maxAnzahlPersonnen_pro_qm)
+              WHERE id = RAUMID;
+      END WHILE ;
+
+      CLOSE CURSOR1;
+
+  END;
+  `);
 
   await knex.raw(
     `
@@ -191,7 +219,6 @@ END ;
 
         DECLARE cur1 CURSOR FOR SELECT Reservierung_id, Kunde_id FROM Begleiter WHERE Reservierung_id = NEW.Reservierung_id;
 
-        #Ein Begleiter kann nicht zweimal an der gleichen Reservierung teilnehmen -- KundenID auch noch hinzufügen
         OPEN cur1;
         read_loop: LOOP
             FETCH cur1 INTO idReservierung, idKunde; #hier noch KundenID checken
@@ -381,32 +408,7 @@ return
  
 
         
-        await knew.raw(`
-
-        CREATE TRIGGER maxAnzahlPersonen
-        AFTER INSERT ON CoronaInfo FOR EACH ROW BEGIN
-    
-    
-            DECLARE running INT DEFAULT TRUE;
-            DECLARE RAUMID INT;
-            DECLARE FLAECHE FLOAT;
-    
-            DECLARE CURSOR1 CURSOR FOR SELECT id , Flaeche_in_m2 FROM Raum ;
-            DECLARE CONTINUE HANDLER FOR NOT FOUND SET running = FALSE;
-    
-            OPEN CURSOR1;
-    
-            WHILE running DO
-                FETCH CURSOR1 INTO RAUMID , FLAECHE;
-                UPDATE Raum
-                    SET max_Anzahl_Personen = FLOOR(FLAECHE * NEW.maxAnzahlPersonnen_pro_qm)
-                    WHERE id = RAUMID;
-            END WHILE ;
-    
-            CLOSE CURSOR1;
-    
-        END;
-        `);
+        
         
         await knex.raw(`
         CREATE PROCEDURE BegleiterHinzufuegen(IN ReservierungsId INT , IN BegleiterId INT  )
