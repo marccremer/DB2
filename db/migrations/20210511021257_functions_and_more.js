@@ -275,7 +275,7 @@ BEGIN
     close curTisch;
 
 end $
-DELIMITER ;
+delimiter ;
 `)
 
 await knex.raw(`
@@ -341,7 +341,7 @@ await knex.raw(`
 
         END;
         `);
-        
+
     return
   await knex.raw(`
   create trigger checkInsertReservierer
