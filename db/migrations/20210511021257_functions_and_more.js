@@ -232,27 +232,116 @@ END ;
     `)
 
     await knex.raw(`
-    CREATE PROCEDURE BegleiterHinzufuegen(IN ReservierungsId INT , IN BegleiterId INT  )
-      BEGIN
+    DROP PROCEDURE reservierungAufTischeVerteilen;
+DELIMITER $
+CREATE PROCEDURE reservierungAufTischeVerteilen(Datum datetime, AnzahlPersonen int, Reservierungs_ID int unsigned)
+BEGIN
+    DECLARE finished INTEGER DEFAULT 0;
+    DECLARE AktuelleTischid int unsigned;
+    DECLARE AnzahlAnPlätzen int DEFAULT 0;
+    DECLARE frei int;
+    DECLARE wieVielePlätzeHabenWirSchon int DEFAULT 0;
+    DEClARE curTisch
+		CURSOR FOR
+			SELECT id,anzahl_plaetze FROM Tisch;
+    DECLARE CONTINUE HANDLER
+        FOR NOT FOUND SET finished = 1;
 
-      IF BegleiterId NOT IN
-        (SELECT id FROM Kunde
-        WHERE id = BegleiterId) THEN
-          SIGNAL SQLSTATE '20001' SET MESSAGE_TEXT = 'BEGLEITER DOES NOT EXISTENT';
-      ELSEIF ReservierungsId NOT IN
-      (SELECT id FROM Reservierung
-      WHERE id = ReservierungsId) THEN
-          SIGNAL SQLSTATE '20002' SET MESSAGE_TEXT = 'RESERVIERUNG DOES NOT EXISTENT';
-      ELSE
-          INSERT Begleiter(kunde_id, reservierung_id) VALUES (
-                                                              BegleiterId,
-                                                              Reservierungsid
-                                                            );
-      END IF;
+    SET @habenGenugPlätze:=verfügbarkeitAnPlätzenFürDatum(Datum,AnzahlPersonen);
 
-    END;
-    `);
+    if @habenGenugPlätze = 0 THEN
+        SIGNAL sqlstate '45000' SET Message_Text ='Es sind für das gewählte Datum leider nicht genügend Plätze vorhanden.';
+        end if;
 
+    OPEN curTisch;
+
+     getFreienTisch: LOOP
+		FETCH curTisch INTO AktuelleTischid,AnzahlAnPlätzen;
+		IF wieVielePlätzeHabenWirSchon>=AnzahlPersonen THEN
+            leave getFreienTisch;
+        end if;
+		IF finished = 1 THEN
+			LEAVE getFreienTisch;
+		END IF;
+		SELECT COUNT(Tisch_id) INTO frei FROM
+		                                      (SELECT * FROM
+		                                                     (SELECT * FROM Tischreservierung TR JOIN Reservierung R on TR.reservierung_id = R.id) S
+		                                      WHERE Datumszeit=Datum) B WHERE Tisch_id=AktuelleTischid;
+		if frei = 0 THEN
+            insert Tischreservierung(Tisch_id, reservierung_id) VALUES (AktuelleTischid,Reservierungs_ID);
+            SET wieVielePlätzeHabenWirSchon = wieVielePlätzeHabenWirSchon + AnzahlAnPlätzen;
+        end if;
+	END LOOP getFreienTisch;
+    close curTisch;
+
+end $
+DELIMITER ;
+`)
+
+await knex.raw(`
+DELIMITER $
+CREATE FUNCTION verfügbarkeitAnPlätzenFürDatum(Datum datetime, GewünschteAnzahlPlätze int)
+RETURNS int
+    BEGIN
+        DECLARE Result Int DEFAULT 0;
+        DECLARE finished INTEGER DEFAULT 0;
+    DECLARE AktuelleTischid int unsigned;
+    DECLARE AnzahlAnPlätzen int DEFAULT 0;
+    DECLARE frei int;
+    DECLARE wieVielePlätzeHabenWirSchon int DEFAULT 0;
+    DEClARE curTisch
+		CURSOR FOR
+			SELECT id,anzahl_plaetze FROM Tisch;
+    DECLARE CONTINUE HANDLER
+        FOR NOT FOUND SET finished = 1;
+OPEN curTisch;
+     getFreienTisch: LOOP
+		FETCH curTisch INTO AktuelleTischid,AnzahlAnPlätzen;
+		IF wieVielePlätzeHabenWirSchon>=GewünschteAnzahlPlätze THEN
+            leave getFreienTisch;
+        end if;
+		IF finished = 1 THEN
+			LEAVE getFreienTisch;
+		END IF;
+		SELECT COUNT(Tisch_id) INTO frei FROM
+		                                      (SELECT * FROM
+		                                                     (SELECT * FROM Tischreservierung TR JOIN Reservierung R on TR.reservierung_id = R.id) S
+		                                      WHERE Datumszeit=Datum) B WHERE Tisch_id=AktuelleTischid;
+		if frei = 0 THEN
+            SET wieVielePlätzeHabenWirSchon = wieVielePlätzeHabenWirSchon + AnzahlAnPlätzen;
+        end if;
+	END LOOP getFreienTisch;
+        if wieVielePlätzeHabenWirSchon>=GewünschteAnzahlPlätze THEN
+            SET Result=1;
+        end if;
+    close curTisch;
+    Return Result;
+    end $
+delimiter ;
+`)
+
+await knex.raw(`
+        CREATE PROCEDURE BegleiterHinzufuegen(IN ReservierungsId INT , IN BegleiterId INT  )
+          BEGIN
+
+          IF BegleiterId NOT IN
+            (SELECT id FROM Kunde
+            WHERE id = BegleiterId) THEN
+              SIGNAL SQLSTATE '20001' SET MESSAGE_TEXT = 'BEGLEITER DOES NOT EXISTENT';
+          ELSEIF ReservierungsId NOT IN
+          (SELECT id FROM Reservierung
+          WHERE id = ReservierungsId) THEN
+              SIGNAL SQLSTATE '20002' SET MESSAGE_TEXT = 'RESERVIERUNG DOES NOT EXISTENT';
+          ELSE
+              INSERT Begleiter(kunde_id, reservierung_id) VALUES (
+                                                                  BegleiterId,
+                                                                  Reservierungsid
+                                                                );
+          END IF;
+
+        END;
+        `);
+        
     return
   await knex.raw(`
   create trigger checkInsertReservierer
@@ -298,20 +387,6 @@ END ;
       SET maxAnzahl = maxAnzahlpQ * flaeche;
       UPDATE Raum SET maxAnzahlRaum = maxAnzahl WHERE id = idRaum;
       END
-      `);
-return
-  await knex.raw(
-      `
-      BEGIN
-      DECLARE kundenid INT;
-      SET kundenid = 0;
-      SELECT id INTO kundenid FROM Kunde WHERE Kunde_id = id;
-      IF kundenid = 0 THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Bitte zuerst den Kunden hinzufügen';
-      ELSEIF
-        INSERT INTO Reservierung VALUES (id, Datum, Kunde_id);
-      END IF;
-      END;
       `);
 
   await knex.raw(
@@ -447,7 +522,27 @@ return
         
         
         
+        await knex.raw(`
+        CREATE PROCEDURE BegleiterHinzufuegen(IN ReservierungsId INT , IN BegleiterId INT  )
+          BEGIN
 
+          IF BegleiterId NOT IN
+            (SELECT id FROM Kunde
+            WHERE id = BegleiterId) THEN
+              SIGNAL SQLSTATE '20001' SET MESSAGE_TEXT = 'BEGLEITER DOES NOT EXISTENT';
+          ELSEIF ReservierungsId NOT IN
+          (SELECT id FROM Reservierung
+          WHERE id = ReservierungsId) THEN
+              SIGNAL SQLSTATE '20002' SET MESSAGE_TEXT = 'RESERVIERUNG DOES NOT EXISTENT';
+          ELSE
+              INSERT Begleiter(kunde_id, reservierung_id) VALUES (
+                                                                  BegleiterId,
+                                                                  Reservierungsid
+                                                                );
+          END IF;
+
+        END;
+        `);
 
 
 };
