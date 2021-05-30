@@ -122,3 +122,88 @@ CREATE OR REPLACE PROCEDURE BegleiterHinzufuegen( ReservierungsId IN NUMBER , Ku
         END IF;
 
     END;
+
+    CREATE OR REPLACE PROCEDURE reservierungAufTischeVerteilen(Datum timestamp(0), AnzahlPersonen number, Reservierungs_ID number)
+IS
+    finished NUMBER(10) DEFAULT 0;
+    AktuelleTischid number(10);
+    AnzahlAnPlätzen number(10) DEFAULT 0;
+    frei number(10);
+    wieVielePlätzeHabenWirSchon number(10) DEFAULT 0;
+    CURSOR curTisch
+	 IS
+			SELECT id,anzahl_plaetze FROM Tisch;
+BEGIN
+   
+    SET @habenGenugPlätze:=verfügbarkeitAnPlätzenFürDatum(Datum,AnzahlPersonen);
+
+    if @habenGenugPlätze = 0 THEN
+        RAISE_APPLICATION_ERROR Message_Text :='Es sind für das gewählte Datum leider nicht genügend Plätze vorhanden.';
+        end if;
+
+    OPEN curTisch;
+
+     <<getFreienTisch>> LOOP
+		FETCH curTisch INTO AktuelleTischid,AnzahlAnPlätzen;
+		IF curTisch%NOTFOUND THEN
+        finished := 1;
+		END IF;
+		IF wieVielePlätzeHabenWirSchon>=AnzahlPersonen THEN
+            exit getFreienTisch;
+        end if;
+		IF finished = 1 THEN
+			EXIT getFreienTisch;
+		END IF;
+		SELECT COUNT(Tisch_id) INTO frei FROM
+		                                      (SELECT * FROM
+		                                                     (SELECT * FROM Tischreservierung TR JOIN Reservierung R on TR.reservierung_id = R.id) S
+		                                      WHERE Datumszeit=Datum) B WHERE Tisch_id=AktuelleTischid;
+		if frei = 0 THEN
+            insert Tischreservierung(Tisch_id, reservierung_id) SELECT  AktuelleTischid,Reservierungs_ID  FROM dual;
+            wieVielePlätzeHabenWirSchon := wieVielePlätzeHabenWirSchon + AnzahlAnPlätzen;
+        end if;
+	END LOOP getFreienTisch;
+    close curTisch;
+
+end;
+
+CREATE OR REPLACE FUNCTION verfügbarkeitAnPlätzenFürDatum(Datum timestamp(0), GewünschteAnzahlPlätze number)
+RETURN number
+    IS
+        Result Number(10) DEFAULT 0;
+        finished NUMBER(10) DEFAULT 0;
+    AktuelleTischid number(10);
+    AnzahlAnPlätzen number(10) DEFAULT 0;
+    frei number(10);
+    wieVielePlätzeHabenWirSchon number(10) DEFAULT 0;
+    CURSOR curTisch
+	 IS
+			SELECT id,anzahl_plaetze FROM Tisch;
+    BEGIN
+   OPEN curTisch;
+     <<getFreienTisch>> LOOP
+		FETCH curTisch INTO AktuelleTischid,AnzahlAnPlätzen;
+		IF curTisch%NOTFOUND THEN
+        finished := 1;
+		END IF;
+		IF wieVielePlätzeHabenWirSchon>=GewünschteAnzahlPlätze THEN
+            exit getFreienTisch;
+        end if;
+		IF finished = 1 THEN
+			EXIT getFreienTisch;
+		END IF;
+
+		SELECT COUNT(Tisch_id) INTO frei FROM
+		                                      (SELECT * FROM
+		                                                     (SELECT * FROM Tischreservierung TR JOIN Reservierung R on TR.reservierung_id = R.id) S
+		                                      WHERE Datumszeit=Datum) B WHERE Tisch_id=AktuelleTischid;
+		if frei = 0 THEN
+            wieVielePlätzeHabenWirSchon := wieVielePlätzeHabenWirSchon + AnzahlAnPlätzen;
+        end if;
+	END LOOP getFreienTisch;
+        if wieVielePlätzeHabenWirSchon>=GewünschteAnzahlPlätze THEN
+            Result:=1;
+        end if;
+    close curTisch;
+    Return Result;
+    end ;
