@@ -10,6 +10,8 @@
   await knex.raw('DROP FUNCTION IF EXISTS gesamtanzahl_Plaetze');
   await knex.raw('DROP TRIGGER IF EXISTS maxAnzahlPersonen_t');
   await knex.raw( 'DROP TRIGGER IF EXISTS checkInsertBegleiter');
+  await knex.raw( 'DROP PROCEDURE IF EXISTS reservierungAufTischeVerteilen');
+  await knex.raw( 'DROP FUNCTION IF EXISTS verfügbarkeitAnPlätzenFürDatum');
 
   
   await knex.raw(`
@@ -232,8 +234,6 @@ END ;
     `)
 
     await knex.raw(`
-    DROP PROCEDURE reservierungAufTischeVerteilen;
-DELIMITER $
 CREATE PROCEDURE reservierungAufTischeVerteilen(Datum datetime, AnzahlPersonen int, Reservierungs_ID int unsigned)
 BEGIN
     DECLARE finished INTEGER DEFAULT 0;
@@ -274,12 +274,10 @@ BEGIN
 	END LOOP getFreienTisch;
     close curTisch;
 
-end $
-delimiter ;
+end $;
 `)
 
 await knex.raw(`
-DELIMITER $
 CREATE FUNCTION verfügbarkeitAnPlätzenFürDatum(Datum datetime, GewünschteAnzahlPlätze int)
 RETURNS int
     BEGIN
@@ -316,8 +314,7 @@ OPEN curTisch;
         end if;
     close curTisch;
     Return Result;
-    end $
-delimiter ;
+    end ;
 `)
 
 await knex.raw(`
