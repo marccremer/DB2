@@ -44,3 +44,140 @@ BEGIN
   INTO   :new.ID
   FROM   dual;
 END;
+
+
+--Tabelle Raum
+create table Raum
+(
+    id                  number(10) check (id > 0) not null primary key,
+    Name                varchar2(40)  not null,
+    Ausenbereich        char(1),
+    max_Anzahl_Personen number(10),
+    Flaeche_in_m2       binary_double  not null
+);
+
+create sequence Raum_seq start with 1 increment by 1;
+
+create or replace trigger Raum_seq_tr
+ before insert on Raum for each row
+ when (new.id is null)
+begin
+ select Raum_seq.nextval into :new.id from dual;
+end;
+/
+
+
+--Tabelle Adresse
+create table Adresse
+(
+    id         number(10) check (id > 0) not null primary key,
+    strasse    varchar2(50)  not null,
+    Hausnummer varchar2(12),
+    stadt      varchar2(50)  not null,
+    zipcode    varchar2(15)  not null
+);
+
+-- Generate ID using sequence and trigger
+create sequence Adresse_seq start with 1 increment by 1;
+
+create or replace trigger Adresse_seq_tr
+ before insert on Adresse for each row
+ when (new.id is null)
+begin
+ select Adresse_seq.nextval into :new.id from dual;
+end;
+/
+
+
+--Tabelle Kontaktdaten
+-- SQLINES LICENSE FOR EVALUATION USE ONLY
+create table Kontaktdaten
+(
+    id            number(10) check (id > 0) not null primary key,
+    Adresse_id    number(10) check (Adresse_id > 0) not null,
+    E-Mail        varchar2(254),
+    Telefonnummer number(10)
+);
+
+-- Generate ID using sequence and trigger
+create sequence Kontaktdaten_seq start with 1 increment by 1;
+
+create or replace trigger Kontaktdaten_seq_tr
+ before insert on Kontaktdaten for each row
+ when (new.id is null)
+begin
+ select Kontaktdaten_seq.nextval into :new.id from dual;
+end;
+/
+alter table Kontaktdaten
+    add constraint kontaktdaten_adresse_id_foreign foreign key (Adresse_id) references Adresse (id) on delete cascade;
+
+
+--Tabelle Coronainfo
+-- SQLINES LICENSE FOR EVALUATION USE ONLY
+create table CoronaInfo
+(
+    id                        number(10) check (id > 0) not null primary key,
+    momentane_Inzidenz        number(10)          not null,
+    maxAnzahlPersonnen_pro_qm number(10),
+    Datum                     timestamp(0)
+);
+
+-- Generate ID using sequence and trigger
+create sequence CoronaInfo_seq start with 1 increment by 1;
+
+create or replace trigger CoronaInfo_seq_tr
+ before insert on CoronaInfo for each row
+ when (new.id is null)
+begin
+ select CoronaInfo_seq.nextval into :new.id from dual;
+end;
+/
+
+--Tabelle Tischgruppe
+-- SQLINES LICENSE FOR EVALUATION USE ONLY
+create table Tischgruppe
+(
+    id      number(10) check (id > 0) not null primary key,
+    Name    clob,
+    Raum_id number(10) check (Raum_id > 0) not null
+);
+
+-- Generate ID using sequence and trigger
+create sequence Tischgruppe_seq start with 1 increment by 1;
+
+create or replace trigger Tischgruppe_seq_tr
+ before insert on Tischgruppe for each row
+ when (new.id is null)
+begin
+ select Tischgruppe_seq.nextval into :new.id from dual;
+end;
+/
+alter table Tischgruppe
+    add constraint tischgruppe_raum_id_foreign foreign key (Raum_id) references Raum (id) on delete cascade;
+
+
+--Tabelle Tisch
+-- SQLINES LICENSE FOR EVALUATION USE ONLY
+create table Tisch
+(
+    id             number(10) check (id > 0) not null primary key,
+    anzahl_plaetze number(10)          not null,
+    Tischgruppe_id number(10) check (Tischgruppe_id > 0) not null
+);
+
+-- Generate ID using sequence and trigger
+create sequence Tisch_seq start with 1 increment by 1;
+
+create or replace trigger Tisch_seq_tr
+ before insert on Tisch for each row
+ when (new.id is null)
+begin
+ select Tisch_seq.nextval into :new.id from dual;
+end;
+/
+alter table Tisch
+    add constraint tisch_tischgruppe_id_foreign foreign key (Tischgruppe_id) references Tischgruppe (id) on delete cascade;
+
+
+
