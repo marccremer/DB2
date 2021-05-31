@@ -216,3 +216,57 @@ RETURN number
           RAISE_APPLICATION_ERROR MESSAGE_TEXT := 'Der gewünschte Kunde ist nicht zu finden';
         END IF;
     END;
+
+
+create function maxAnzahlPersonen(idRaum number, datum1 date) RETURN NUMBER
+      IS
+      maxAnzahlpQ NUMBER(10);
+      flaeche BINARY_DOUBLE;
+      maxAnzahl NUMBER(10);
+      BEGIN
+      SELECT maxAnzahlPersonnen_pro_qm INTO maxAnzahlpQ FROM CoronaInfo WHERE Datum = datum1;
+      SELECT Flaeche_in_m2 INTO flaeche FROM Raum WHERE id = idRaum;
+      maxAnzahl := maxAnzahlpQ * flaeche;
+      UPDATE Raum SET max_Anzahl_Personen = maxAnzahl WHERE id = idRaum;
+      RETURN maxAnzahl;
+      END;
+
+
+create trigger CHECKINSERTBEGLEITER
+    before insert
+    on BEGLEITER
+    for each row
+DECLARE
+    idReservierung NUMBER;
+    idKunde NUMBER;
+    datumReservierung DATE;
+    CURSOR cur1 IS SELECT RESERVIERUNGS_ID, KONTAKTDATEN_ID FROM Begleiter WHERE RESERVIERUNGS_ID = :NEW.RESERVIERUNGS_ID;
+    exceptionBegleiter EXCEPTION;
+BEGIN
+
+    --Ein Begleiter kann nicht zweimal an der gleichen Reservierung teilnehmen -- KundenID auch noch hinzufügen
+    OPEN cur1;
+    <<read_loop>> LOOP
+         FETCH cur1 INTO idReservierung, idKunde; --hier noch KundenID checken
+         --Durchlaufen von allen Reservierungen, an die der Begleiter teilnimmt
+         IF :NEW.RESERVIERUNGS_ID = idReservierung AND :NEW.KONTAKTDATEN_ID = idKunde THEN
+              RAISE_APPLICATION_ERROR(-2001, 'Begleiter darf nicht zweimal der gleichen Reservierung hinzugefügt werden');
+         END IF;
+    END LOOP;
+    CLOSE cur1;
+END;
+
+
+create or replace trigger checkInsertReservierer
+    before insert
+    on Reservierung
+    for each row
+DECLARE
+    reserviererID VARCHAR(45);
+BEGIN
+
+    SELECT RESERVIERER_ID INTO reserviererID FROM Reservierung WHERE Datumszeit = :NEW.Datumszeit;
+    IF reserviererID = :NEW.RESERVIERER_ID THEN
+        RAISE_APPLICATION_ERROR(-2001, 'Reservierer hat bereits eine Reservierung an diesem Datum');
+    END IF;
+END;
