@@ -128,12 +128,12 @@ END ;
 
     await knex.raw(`
     create
-    function maxAnzahlPersonen(idRaum int, datum1 Date) RETURNS INTEGER
+    function maxAnzahlPersonen(idRaum int) RETURNS INTEGER
       BEGIN
       DECLARE maxAnzahlpQ INTEGER;
       DECLARE flaeche FLOAT;
       DECLARE maxAnzahl INTEGER;
-      SELECT maxAnzahlPersonnen_pro_qm INTO maxAnzahlpQ FROM CoronaInfo WHERE Datum = datum1;
+      SELECT maxAnzahlPersonnen_pro_qm INTO maxAnzahlpQ FROM CoronaInfo;
       SELECT Flaeche_in_m2 INTO flaeche FROM Raum WHERE id = idRaum;
       SET maxAnzahl = maxAnzahlpQ * flaeche;
       UPDATE Raum SET max_Anzahl_Personen = maxAnzahl WHERE id = idRaum;
