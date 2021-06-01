@@ -14,6 +14,7 @@
   await knex.raw( 'DROP FUNCTION IF EXISTS verfügbarkeitAnPlätzenFürDatum');
   await knex.raw( 'DROP FUNCTION IF EXISTS checkInsertTeilnehmerInvalidKunde');
   await knex.raw( 'DROP PROCEDURE IF EXISTS BegleiterHinzufuegen');
+  await knex.raw( 'DROP TRIGGER IF EXISTS checkInsertReservierer');
 
   
   await knex.raw(`
@@ -364,19 +365,21 @@ await knex.raw(`
           
         `)
 
+        
+
     return
 
     await knex.raw(
-      `
-      CREATE TRIGGER checkInsertTeilnehmerInvalidKunde BEFORE INSERT ON Reservierung FOR EACH ROW
-        BEGIN
-            DECLARE kundenid INT DEFAULT 0;
-        SELECT COUNT(id) INTO kundenid FROM Reservierung WHERE id = NEW.id AND Datumszeit = NEW.Datumszeit;
-            IF kundenid = 0 THEN
-              SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Der gewünschte Kunde ist nicht zu finden';
-            END IF;
-        END;
-      `);
+        `
+        CREATE TRIGGER checkInsertTeilnehmerInvalidKunde BEFORE INSERT ON Reservierung FOR EACH ROW
+          BEGIN
+              DECLARE kundenid INT DEFAULT 0;
+          SELECT COUNT(id) INTO kundenid FROM Reservierung WHERE id = NEW.id AND Datumszeit = NEW.Datumszeit;
+              IF kundenid = 0 THEN
+                SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Der gewünschte Kunde ist nicht zu finden';
+              END IF;
+          END;
+        `);
 
 
 
