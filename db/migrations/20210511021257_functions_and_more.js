@@ -127,7 +127,7 @@ END ;
 
     await knex.raw(`
     create
-    function maxAnzahlPersonen(idRaum int, datum1 int) RETURNS INTEGER
+    function maxAnzahlPersonen(idRaum int, datum1 Date) RETURNS INTEGER
       BEGIN
       DECLARE maxAnzahlpQ INTEGER;
       DECLARE flaeche FLOAT;
@@ -319,18 +319,6 @@ OPEN curTisch;
     end ;
 `)
 
-await knex.raw(
-  `
-  CREATE TRIGGER checkInsertTeilnehmerInvalidKunde BEFORE INSERT ON Reservierung FOR EACH ROW
-    BEGIN
-        DECLARE kundenid INT DEFAULT 0;
-    SELECT COUNT(id) INTO kundenid FROM Reservierung WHERE id = NEW.id AND Datumszeit = NEW.Datumszeit;
-        IF kundenid = 0 THEN
-          SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Der gewünschte Kunde ist nicht zu finden';
-        END IF;
-    END;
-  `);
-
 await knex.raw(`
         CREATE PROCEDURE BegleiterHinzufuegen(IN ReservierungsId INT , IN BegleiterId INT  )
           BEGIN
@@ -354,6 +342,19 @@ await knex.raw(`
         `);
 
     return
+
+    await knex.raw(
+      `
+      CREATE TRIGGER checkInsertTeilnehmerInvalidKunde BEFORE INSERT ON Reservierung FOR EACH ROW
+        BEGIN
+            DECLARE kundenid INT DEFAULT 0;
+        SELECT COUNT(id) INTO kundenid FROM Reservierung WHERE id = NEW.id AND Datumszeit = NEW.Datumszeit;
+            IF kundenid = 0 THEN
+              SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Der gewünschte Kunde ist nicht zu finden';
+            END IF;
+        END;
+      `);
+
   await knex.raw(`
   create trigger checkInsertReservierer
     before insert
