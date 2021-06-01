@@ -10,22 +10,26 @@ const tableNames = require('../../src/tableNames');
  * @param {import('knex')} knex
  */
 exports.up = async (knex) => {
-  return;
   const term = 'M';
   const selectstatement = await knex(tableNames.kunde)
-    .where('name', 'like', 'M%').toSQL();
+    .where('Vorname', 'like', 'M%').toSQL();
   console.log(selectstatement);
+  await knex.raw('DROP VIEW IF EXISTS aktuelleKunden');
+  await knex.raw('DROP VIEW IF EXISTS kundenAnwesenheit');
   await knex.raw(`
-  CREATE VIEW aktuelleKunden AS 
-  SELECT Reservierung.Datum, Reservierung.Kunde_id, Kunde.name, Kunde.id
-  FROM Kunde INNER JOIN Reservierung ON Reservierung.Kunde_id = Kunde.id
-  WHERE Reservierung.Datum = CURDATE();`);
+  CREATE VIEW aktuelleKunden AS SELECT b.Kunde_id, k2.Vorname AS Begleitervorname, k2.Nachname AS Begleiternachname, Datumszeit,Reservierung_id, Kunde.Vorname AS Reservierervorname, Kunde.Nachname AS Reservierernachname
+FROM Reservierung JOIN Kunde ON Reservierung.reservierer_id = Kunde.id
+    JOIN Begleiter B on Reservierung.id = B.Reservierung_id
+    JOIN Kunde k2 ON k2.id = b.Kunde_id
+WHERE Reservierung.Datumszeit = CURDATE()`);
 
   await knex.raw(`
-  CREATE VIEW kundenAnwesenheit AS 
-  SELECT Reservierung.Datum, Reservierung.Kunde_id, Kunde.name, Kunde.id
-  FROM Kunde INNER JOIN Reservierung ON Reservierung.Kunde_id = Kunde.id;`);
+  CREATE VIEW kundenAnwesenheit AS SELECT b.Kunde_id, k2.Vorname AS Begleitervorname, k2.Nachname AS Begleiternachname, Datumszeit,Reservierung_id, Kunde.Vorname AS Reservierervorname, Kunde.Nachname AS Reservierernachname
+FROM Reservierung JOIN Kunde ON Reservierung.reservierer_id = Kunde.id
+    JOIN Begleiter B on Reservierung.id = B.Reservierung_id
+    JOIN Kunde k2 ON k2.id = b.Kunde_id`);
   await knex.raw(`create view ${viewNames.sampleview} as ${selectstatement.sql}`, selectstatement.bindings);
+  return;
 };
 
 exports.down = async (knex) => {
