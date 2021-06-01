@@ -207,33 +207,38 @@ END ;
     `)
 
 
-
-
-
-
     await knex.raw(`
     create trigger checkInsertBegleiter
         before insert
         on Begleiter
         for each row
-    BEGIN
+        BEGIN
         DECLARE idReservierung INTEGER;
         DECLARE idKunde INTEGER;
-        DECLARE datumReservierung DATE;
-
-        DECLARE cur1 CURSOR FOR SELECT Reservierung_id, Kunde_id FROM Begleiter WHERE Reservierung_id = NEW.Reservierung_id;
-
+        DECLARE zaehler INTEGER;
+    
+        DECLARE cur1 CURSOR FOR SELECT Reservierung_id, Kunde_id FROM Begleiter WHERE Reservierung_id = NEW.Reservierung_id AND Kunde_id = NEW.Kunde_id;
+        SELECT COUNT(*) INTO zaehler FROM Begleiter WHERE Reservierung_id = NEW.Reservierung_id AND Kunde_id = NEW.Kunde_id;
+    
+        #Ein Begleiter kann nicht zweimal an der gleichen Reservierung teilnehmen -- KundenID auch noch hinzufügen
         OPEN cur1;
-        read_loop: LOOP
-            FETCH cur1 INTO idReservierung, idKunde; #hier noch KundenID checken
-            #Durchlaufen von allen Reservierungen, an die der Begleiter teilnimmt
-            IF idReservierung = NEW.Reservierung_id AND idKunde = NEW.Kunde_id THEN
+        IF zaehler > 0 THEN
+            read_loop: LOOP
+             FETCH cur1 INTO idReservierung, idKunde; #hier noch KundenID checken
+             #Durchlaufen von allen Reservierungen, an die der Begleiter teilnimmt
+             IF idReservierung = NEW.Reservierung_id AND idKunde = NEW.Kunde_id THEN
                   SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Begleiter darf nicht zweimal der gleichen Reservierung hinzugefügt werden';
-            END IF;
+             END IF;
         END LOOP;
+        end if;
         CLOSE cur1;
     END;
+
     `)
+
+
+
+    
 
     await knex.raw(`
 CREATE PROCEDURE reservierungAufTischeVerteilen(Datum datetime, AnzahlPersonen int, Reservierungs_ID int unsigned)
@@ -348,14 +353,15 @@ await knex.raw(`
           for each row
           BEGIN
           #Variablen für Reservierer und Begleiter
-          DECLARE reserviererID VARCHAR(45);
+          DECLARE reserviererID INTEGER;
       
           #check für den Reservierer
-          SELECT reservierer_id_id INTO reserviererID FROM Reservierung WHERE Datumszeit = NEW.Datumszeit;
-          IF reserviererID = NEW.reservierer_id_id THEN
+          SELECT reservierer_id INTO reserviererID FROM Reservierung WHERE Datumszeit = NEW.Datumszeit;
+          IF reserviererID = NEW.reservierer_id THEN
               SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Reservierer hat bereits eine Reservierung an diesem Datum';
           END IF;
-          END;  
+          END; 
+          
         `)
 
     return
