@@ -341,6 +341,23 @@ await knex.raw(`
         END;
         `);
 
+        await knex.raw(`
+        create trigger checkInsertReservierer
+          before insert
+          on Reservierung
+          for each row
+          BEGIN
+          #Variablen für Reservierer und Begleiter
+          DECLARE reserviererID VARCHAR(45);
+      
+          #check für den Reservierer
+          SELECT reservierer_id_id INTO reserviererID FROM Reservierung WHERE Datumszeit = NEW.Datumszeit;
+          IF reserviererID = NEW.reservierer_id_id THEN
+              SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Reservierer hat bereits eine Reservierung an diesem Datum';
+          END IF;
+          END;  
+        `)
+
     return
 
     await knex.raw(
@@ -354,24 +371,6 @@ await knex.raw(`
             END IF;
         END;
       `);
-
-  await knex.raw(`
-  create trigger checkInsertReservierer
-    before insert
-    on Reservierung
-    for each row
-    BEGIN
-    #Variablen für Reservierer und Begleiter
-    DECLARE reserviererID VARCHAR(45);
-
-    #check für den Reservierer
-    SELECT reservierer_id_id INTO reserviererID FROM Reservierung WHERE Datumszeit = NEW.Datumszeit;
-    IF reserviererID = NEW.reservierer_id_id THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Reservierer hat bereits eine Reservierung an diesem Datum';
-    END IF;
-    END;  
-  `)
-
 
 
 
