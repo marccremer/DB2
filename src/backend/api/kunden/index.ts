@@ -1,30 +1,16 @@
 import express from "express";
 import Knex from "knex";
-require("dotenv").config();
+import { Kunde } from "../../../../db/models/schemas";
+import configdb from "../configdb";
 
-const configdb = {
-  client: "mysql",
-  connection: {
-    host: process.env.DB_LOCAL_HOST,
-    user: process.env.DB_LOCAL_USER,
-    password: process.env.DB_LOCAL_PW,
-    database: process.env.DB_LOCAL_NAME,
-  },
-};
-const db: Knex = require("knex")(configdb);
+
+const db: Knex = Knex(configdb);
 
 const router = express.Router({
   mergeParams: true,
 });
 
 // Spalten in der tabelle
-interface Kunde {
-  id?: number;
-  nachname: string;
-  vorname:string;
-  alter: number;
-  Kontaktdaten_id: number;
-}
 
 // get all
 router.get("/", async (req, res, next) => {

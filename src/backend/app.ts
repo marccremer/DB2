@@ -14,13 +14,13 @@ app.use(compression());
 app.use(helmet());
 app.use(express.json());
 
-var path = require('path');
+const path = require('path');
 
 app.get("/", (req, res) => {
   res.send("Wrong site bub");
 });
 app.use(express.static(path.join(__dirname, 'assets')))
-app.use('/api/v1', api);
+app.use('/', api);
 
 app.use(middlewares.notFound);
 app.use(middlewares.errorHandler);
