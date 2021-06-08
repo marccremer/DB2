@@ -1,6 +1,6 @@
 import express from "express";
 import Knex from "knex";
-import { Raum } from "../../../../db/models/schemas";
+import { coronaInfo } from "../../../../db/models/schemas";
 import configdb from "../configdb";
 
 
@@ -15,7 +15,7 @@ const router = express.Router({
 // get all
 router.get("/", async (req, res, next) => {
   try {
-    db<Raum>("raum")
+    db<coronaInfo>("coronaInfo")
       .select("*")
       .then((result) => res.json(result))
       .catch((err) => next(err));
@@ -25,11 +25,11 @@ router.get("/", async (req, res, next) => {
 });
 
 //get 1 by id
-router.get("/:raumid", async (req, res, next) => {
+router.get("/:infoid", async (req, res, next) => {
   try {
-    const id = req.params.raumid;
+    const id = req.params.infoid;
     // TODO: savety check if id is a Integer
-    db<Raum>("Raum")
+    db<coronaInfo>("coronaInfo")
       .select(db.raw("*"))
       .where(db.raw("id = ?", [id]))
       .then((result) => {
@@ -44,8 +44,8 @@ router.get("/:raumid", async (req, res, next) => {
 // create 1
 router.post("/", async (req, res, next) => {
   try {
-    const newItem: Raum = req.body;
-    db<Raum>("Raum")
+    const newItem: coronaInfo = req.body;
+    db<coronaInfo>("coronaInfo")
       .insert(newItem)
       .then((result) => res.json(result))
       .catch((err) => next(err));

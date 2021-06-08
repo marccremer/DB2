@@ -1,6 +1,6 @@
 import express from "express";
 import Knex from "knex";
-import { Raum } from "../../../../db/models/schemas";
+import { Tischreservierung } from "../../../../db/models/schemas";
 import configdb from "../configdb";
 
 
@@ -15,7 +15,7 @@ const router = express.Router({
 // get all
 router.get("/", async (req, res, next) => {
   try {
-    db<Raum>("raum")
+    db<Tischreservierung>("tischreservierung")
       .select("*")
       .then((result) => res.json(result))
       .catch((err) => next(err));
@@ -25,11 +25,11 @@ router.get("/", async (req, res, next) => {
 });
 
 //get 1 by id
-router.get("/:raumid", async (req, res, next) => {
+router.get("/:tischid", async (req, res, next) => {
   try {
-    const id = req.params.raumid;
+    const id = req.params.tischreservierungid;
     // TODO: savety check if id is a Integer
-    db<Raum>("Raum")
+    db<Tischreservierung>("Tischreservierung")
       .select(db.raw("*"))
       .where(db.raw("id = ?", [id]))
       .then((result) => {
@@ -44,8 +44,8 @@ router.get("/:raumid", async (req, res, next) => {
 // create 1
 router.post("/", async (req, res, next) => {
   try {
-    const newItem: Raum = req.body;
-    db<Raum>("Raum")
+    const newItem: Tischreservierung = req.body;
+    db<Tischreservierung>("Tischreservierung")
       .insert(newItem)
       .then((result) => res.json(result))
       .catch((err) => next(err));
