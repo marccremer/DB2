@@ -218,18 +218,20 @@ RETURN number
     END;
 
 
-create function maxAnzahlPersonen(idRaum number, datum1 date) RETURN NUMBER
+create function maxAnzahlPersonen(idRaum number) RETURN NUMBER
       IS
       maxAnzahlpQ NUMBER(10);
       flaeche BINARY_DOUBLE;
       maxAnzahl NUMBER(10);
       BEGIN
-      SELECT maxAnzahlPersonnen_pro_qm INTO maxAnzahlpQ FROM CoronaInfo WHERE Datum = datum1;
-      SELECT Flaeche_in_m2 INTO flaeche FROM Raum WHERE id = idRaum;
-      maxAnzahl := maxAnzahlpQ * flaeche;
-      UPDATE Raum SET max_Anzahl_Personen = maxAnzahl WHERE id = idRaum;
+      --SELECT maxAnzahlPersonnen_pro_qm INTO maxAnzahlpQ FROM CoronaInfo WHERE Datum = datum1;
+      --SELECT Flaeche_in_m2 INTO flaeche FROM Raum WHERE id = idRaum;
+      --maxAnzahl := maxAnzahlpQ * flaeche;
+      --UPDATE Raum SET max_Anzahl_Personen = maxAnzahl WHERE id = idRaum;
+      SELECT MAX_ANZAHL_PERSONEN INTO maxAnzahl FROM Raum WHERE ID = idRaum;
       RETURN maxAnzahl;
       END;
+/
 
 
 create trigger CHECKINSERTBEGLEITER
@@ -237,44 +239,51 @@ create trigger CHECKINSERTBEGLEITER
     on BEGLEITER
     for each row
 DECLARE
-    idReservierung NUMBER;
-    idKunde NUMBER;
-    datumReservierung DATE;
+    idReservierung NUMBER(10);
+    idKunde NUMBER(10);
+    zaehler NUMBER(10);
     CURSOR cur1 IS SELECT RESERVIERUNGS_ID, KONTAKTDATEN_ID FROM Begleiter WHERE RESERVIERUNGS_ID = :NEW.RESERVIERUNGS_ID;
     exceptionBegleiter EXCEPTION;
 BEGIN
-
+    SELECT COUNT(*) INTO zaehler FROM Begleiter WHERE RESERVIERUNGS_ID = :NEW.RESERVIERUNGS_ID AND KONTAKTDATEN_ID = :NEW.KONTAKTDATEN_ID;
     --Ein Begleiter kann nicht zweimal an der gleichen Reservierung teilnehmen -- KundenID auch noch hinzufügen
     OPEN cur1;
-    <<read_loop>> LOOP
-         FETCH cur1 INTO idReservierung, idKunde; --hier noch KundenID checken
-         --Durchlaufen von allen Reservierungen, an die der Begleiter teilnimmt
-         IF :NEW.RESERVIERUNGS_ID = idReservierung AND :NEW.KONTAKTDATEN_ID = idKunde THEN
-              RAISE_APPLICATION_ERROR(-2001, 'Begleiter darf nicht zweimal der gleichen Reservierung hinzugefügt werden');
-         END IF;
-    END LOOP;
+    IF zaehler > 0 THEN
+        --<<read_loop>> LOOP
+             FETCH cur1 INTO idReservierung, idKunde; --hier noch KundenID checken
+             --Durchlaufen von allen Reservierungen, an die der Begleiter teilnimmt
+             IF :NEW.RESERVIERUNGS_ID = idReservierung AND :NEW.KONTAKTDATEN_ID = idKunde THEN
+                  RAISE_APPLICATION_ERROR(-20000, 'Begleiter darf nicht zweimal der gleichen Reservierung hinzugefügt werden');
+             END IF;
+        --END LOOP;
+    END IF;
     CLOSE cur1;
 END;
+/
 
 
-create or replace trigger checkInsertReservierer
+create trigger CHECKINSERTRESERVIERER
     before insert
-    on Reservierung
+    on RESERVIERUNG
     for each row
 DECLARE
+    zaehler NUMBER;
     reserviererID VARCHAR(45);
 BEGIN
-
-    SELECT RESERVIERER_ID INTO reserviererID FROM Reservierung WHERE Datumszeit = :NEW.Datumszeit;
-    IF reserviererID = :NEW.RESERVIERER_ID THEN
-        RAISE_APPLICATION_ERROR(-2001, 'Reservierer hat bereits eine Reservierung an diesem Datum');
+    SELECT COUNT(*) INTO zaehler FROM RESERVIERUNG WHERE DATUMSZEIT = :NEW.DATUMSZEIT;
+    IF zaehler > 0 THEN
+        SELECT RESERVIERER_ID INTO reserviererID FROM Reservierung WHERE Datumszeit = :NEW.Datumszeit;
+        IF reserviererID = :NEW.RESERVIERER_ID THEN
+        RAISE_APPLICATION_ERROR(-20000, 'Reservierer hat bereits eine Reservierung an diesem Datum');
     END IF;
+    end if;
 END;
+/
 
 
 CREATE VIEW RESERVIERUNGMITBEGLEITER AS
     SELECT r.ID AS RESERVIERUNGSID, r.DATUMSZEIT, b.ID AS BEGLEITERID FROM RESERVIERUNG r JOIN BEGLEITER b ON r.ID = b.RESERVIERUNGS_ID
-    WHERE r.DATUMSZEIT BETWEEN CURRENT_DATE AND ADD_MONTHS(CURRENT_DATE, 1);
+    WHERE r.DATUMSZEIT BETWEEN TRUNC(CURRENT_DATE) AND ADD_MONTHS(TRUNC(CURRENT_DATE), 1);
 
 
 create trigger BEGLEITERENTFERNEN
