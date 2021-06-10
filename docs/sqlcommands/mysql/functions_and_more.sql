@@ -11,6 +11,8 @@ DROP FUNCTION IF EXISTS verfügbarkeitAnPlätzenFürDatum;
 DROP FUNCTION IF EXISTS checkInsertTeilnehmerInvalidKunde;
 DROP PROCEDURE IF EXISTS BegleiterHinzufuegen;
 DROP TRIGGER IF EXISTS checkInsertReservierer;
+DROP VIEW aktuelleKunden;
+DROP VIEW kundenanwesenheit;
 
 
 
@@ -332,3 +334,16 @@ create trigger checkInsertReservierer
               SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Reservierer hat bereits eine Reservierung an diesem Datum';
           END IF;
           END;
+
+
+CREATE VIEW aktuelleKunden AS SELECT B.Kunde_id, k2.Vorname AS Begleitervorname, k2.Nachname AS Begleiternachname, Datumszeit,Reservierung_id, Kunde.Vorname AS Reservierervorname, Kunde.Nachname AS Reservierernachname
+    FROM Reservierung JOIN Kunde ON Reservierung.reservierer_id_id = Kunde.id
+    JOIN Begleiter B on Reservierung.id = B.Reservierung_id
+    JOIN Kunde k2 ON k2.id = B.Kunde_id
+    WHERE Reservierung.Datumszeit = CURDATE();
+
+
+CREATE VIEW kundenAnwesenheit AS SELECT B.Kunde_id, k2.Vorname AS Begleitervorname, k2.Nachname AS Begleiternachname, Datumszeit,Reservierung_id, Kunde.Vorname AS Reservierervorname, Kunde.Nachname AS Reservierernachname
+    FROM Reservierung JOIN Kunde ON Reservierung.reservierer_id_id = Kunde.id
+    JOIN Begleiter B on Reservierung.id = B.Reservierung_id
+    JOIN Kunde k2 ON k2.id = B.Kunde_id;
