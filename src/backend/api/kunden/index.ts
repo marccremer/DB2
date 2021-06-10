@@ -1,6 +1,6 @@
 import express from "express";
 import Knex from "knex";
-import { Kunde } from "../../../../db/models/schemas";
+import { joinedKunde, Kunde } from "../../../../db/models/schemas";
 import configdb from "../configdb";
 
 const db: Knex = Knex(configdb);
@@ -72,7 +72,7 @@ router.get("/:kundenid", async (req, res, next) => {
 // create 1
 router.post("/", async (req, res, next) => {
   try {
-    const newItem: Kunde = req.body;
+    const newItem: joinedKunde = req.body;
 
     db<Kunde>("Kunde")
       .insert(newItem)

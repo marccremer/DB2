@@ -44,11 +44,22 @@ interface Reservierer  {
 }
 
 interface Kunde {
-  id?: number
-  nachname: string;
-  vorname:string;
-  alter: number;
+  id?:number
+  Nachname: string;
+  Vorname:string;
+  Alter: number;
   Kontaktdaten_id: number;
+}
+
+interface joinedKunde extends Kunde {
+  Kontaktdaten_id: number,
+  Adresse_id:number;
+  EMail:String;
+  Telefonnummer:number;
+  strasse: string;
+  Hausnummer: string;
+  stadt: string;
+  zipcode: string;
 }
 
 interface Kontaktdaten  {
@@ -71,6 +82,7 @@ interface coronaInfo  {
 }
 
 export {
+  joinedKunde,
   Raum,
   Tischgruppe,
   Tisch,
