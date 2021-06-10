@@ -1,3 +1,14 @@
+DROP TABLE Tischreservierung;
+DROP TABLE Begleiter;
+DROP TABLE Reservierung;
+DROP TABLE Kunde;
+DROP TABLE Tisch;
+DROP TABLE Tischgruppe;
+DROP TABLE CoronaInfo;
+DROP TABLE Kontaktdaten;
+DROP TABLE Adresse;
+DROP TABLE Raum;
+
 create table `Raum`
 (
     `id`                  int unsigned not null auto_increment primary key,
