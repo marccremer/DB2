@@ -25,7 +25,7 @@ exports.up = async (knex) => {
   await knex.schema.createTable(tableNames.kontaktdaten, (table) => {
     table.increments().notNullable();
     references(table, tableNames.adresse);
-    email(table, 'E-Mail');
+    email(table, 'EMail');
     table.integer('Telefonnummer');
   });
 
