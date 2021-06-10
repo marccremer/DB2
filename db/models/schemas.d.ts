@@ -44,6 +44,7 @@ interface Reservierer  {
 }
 
 interface Kunde {
+  id?: number
   nachname: string;
   vorname:string;
   alter: number;
