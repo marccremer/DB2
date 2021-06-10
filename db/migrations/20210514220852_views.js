@@ -18,14 +18,14 @@ exports.up = async (knex) => {
   await knex.raw('DROP VIEW IF EXISTS kundenAnwesenheit');
   await knex.raw(`
   CREATE VIEW aktuelleKunden AS SELECT B.Kunde_id, k2.Vorname AS Begleitervorname, k2.Nachname AS Begleiternachname, Datumszeit,Reservierung_id, Kunde.Vorname AS Reservierervorname, Kunde.Nachname AS Reservierernachname
-FROM Reservierung JOIN Kunde ON Reservierung.reservierer_id = Kunde.id
+    FROM Reservierung JOIN Kunde ON Reservierung.reservierer_id = Kunde.id
     JOIN Begleiter B on Reservierung.id = B.Reservierung_id
     JOIN Kunde k2 ON k2.id = B.Kunde_id
-WHERE Reservierung.Datumszeit = CURDATE()`);
+    WHERE Reservierung.Datumszeit = CURDATE()`);
 
   await knex.raw(`
   CREATE VIEW kundenAnwesenheit AS SELECT B.Kunde_id, k2.Vorname AS Begleitervorname, k2.Nachname AS Begleiternachname, Datumszeit,Reservierung_id, Kunde.Vorname AS Reservierervorname, Kunde.Nachname AS Reservierernachname
-FROM Reservierung JOIN Kunde ON Reservierung.reservierer_id = Kunde.id
+    FROM Reservierung JOIN Kunde ON Reservierung.reservierer_id = Kunde.id
     JOIN Begleiter B on Reservierung.id = B.Reservierung_id
     JOIN Kunde k2 ON k2.id = B.Kunde_id`);
   await knex.raw(`create view ${viewNames.sampleview} as ${selectstatement.sql}`, selectstatement.bindings);

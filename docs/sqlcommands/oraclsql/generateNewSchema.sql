@@ -1,3 +1,35 @@
+DROP TABLE Tischreservierung;
+DROP TRIGGER BEGLEITER_autoinc;
+DROP SEQUENCE BEGLEITER_SEQ;
+DROP TABLE Begleiter;
+DROP TYPE BEGLEITER_T;
+DROP TRIGGER RESERVIERUNG_SEQ_TR;
+DROP SEQUENCE RESERVIERUNG_SEQ;
+DROP TABLE Reservierung;
+DROP TRIGGER RESERVIER_AUTOINC;
+DROP SEQUENCE RESERVIER_SEQ;
+DROP TABLE RESERVIER;
+DROP TYPE RESERVIER_T;
+DROP TYPE KUNDEN_T;
+DROP TRIGGER TISCH_SEQ_TR;
+DROP SEQUENCE TISCH_SEQ;
+DROP TABLE Tisch;
+DROP TRIGGER Tischgruppe_seq_tr;
+DROP SEQUENCE TISCHGRUPPE_SEQ;
+DROP TABLE Tischgruppe;
+DROP TRIGGER CORONAINFO_SEQ_TR;
+DROP SEQUENCE CORONAINFO_SEQ;
+DROP TABLE CoronaInfo;
+DROP TRIGGER KONTAKTDATEN_SEQ_TR;
+DROP SEQUENCE KONTAKTDATEN_SEQ;
+DROP TABLE Kontaktdaten;
+DROP TRIGGER ADRESSE_SEQ_TR;
+DROP SEQUENCE ADRESSE_SEQ;
+DROP TABLE Adresse;
+DROP TRIGGER RAUM_SEQ_TR;
+DROP SEQUENCE RAUM_SEQ;
+DROP TABLE Raum;
+
 --Tabelle Raum
 create table Raum
 (
@@ -225,3 +257,4 @@ alter table Tischreservierung
     add constraint tischreservierung_reservierung_id_foreign foreign key (reservierung_id) references Reservierung (id) on delete cascade;
 alter table Tischreservierung
     add constraint Tischreservierung_pkey primary key (reservierung_id, Tisch_id);
+

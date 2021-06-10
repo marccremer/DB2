@@ -1,3 +1,17 @@
+DROP PROCEDURE rebooking;
+DROP FUNCTION gesamtanzahl_Plaetze;
+DROP TRIGGER REDUZIERUNG_PLAETZE;
+DROP TRIGGER maxAnzahlPersonen;
+DROP PROCEDURE BegleiterHinzufuegen;
+DROP PROCEDURE reservierungAufTischeVerteilen;
+DROP FUNCTION verfügbarkeitAnPlätzenFürDatum;
+DROP FUNCTION maxAnzahlPersonen;
+DROP TRIGGER CHECKINSERTBEGLEITER;
+DROP TRIGGER CHECKINSERTRESERVIERER;
+DROP TRIGGER BEGLEITERENTFERNEN;
+DROP VIEW RESERVIERUNGMITBEGLEITER;
+
+
 CREATE OR REPLACE PROCEDURE rebooking(newDate date, bookingID int)
 IS
 BEGIN
@@ -134,7 +148,7 @@ IS
 	 IS
 			SELECT id,anzahl_plaetze FROM Tisch;
 BEGIN
-   
+
     SET @habenGenugPlätze:=verfügbarkeitAnPlätzenFürDatum(Datum,AnzahlPersonen);
 
     if @habenGenugPlätze = 0 THEN
@@ -288,8 +302,9 @@ CREATE VIEW RESERVIERUNGMITBEGLEITER AS
 
 create trigger BEGLEITERENTFERNEN
     instead of delete
-    on RESERVIERUNGMITBEGLEITERN
+    on RESERVIERUNGMITBEGLEITER
     for each row
 BEGIN
         DELETE FROM BEGLEITER WHERE RESERVIERUNGS_ID = :OLD.RESERVIERUNGID;
     END;
+
