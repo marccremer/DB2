@@ -1,5 +1,6 @@
 import express from "express";
 import kunden from "./kunden";
+import reservierungen from "./reservierung";
 
 const router = express.Router();
 router.get("/", async (req, res, next) => {
@@ -7,5 +8,6 @@ router.get("/", async (req, res, next) => {
 });
 
 router.use("/kunden", kunden);
+router.use("/reservierungen", reservierungen);
 
 export default router;
