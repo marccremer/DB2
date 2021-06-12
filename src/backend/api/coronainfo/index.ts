@@ -15,7 +15,7 @@ const router = express.Router({
 // get all
 router.get("/", async (req, res, next) => {
   try {
-    db<coronaInfo>("coronaInfo")
+    db<coronaInfo>("CoronaInfo")
       .select("*")
       .then((result) => res.json(result))
       .catch((err) => next(err));
@@ -29,7 +29,7 @@ router.get("/:infoid", async (req, res, next) => {
   try {
     const id = req.params.infoid;
     // TODO: savety check if id is a Integer
-    db<coronaInfo>("coronaInfo")
+    db<coronaInfo>("CoronaInfo")
       .select(db.raw("*"))
       .where(db.raw("id = ?", [id]))
       .then((result) => {
@@ -45,7 +45,7 @@ router.get("/:infoid", async (req, res, next) => {
 router.post("/", async (req, res, next) => {
   try {
     const newItem: coronaInfo = req.body;
-    db<coronaInfo>("coronaInfo")
+    db<coronaInfo>("CoronaInfo")
       .insert(newItem)
       .then((result) => res.json(result))
       .catch((err) => next(err));

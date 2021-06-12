@@ -1,6 +1,12 @@
+/* eslint-disable prefer-const */
 import express from "express";
 import Knex from "knex";
-import { joinedKunde, Kunde } from "../../../../db/models/schemas";
+import {
+  Adresse,
+  joinedKunde,
+  Kontaktdaten,
+  Kunde,
+} from "../../../../db/models/schemas";
 import configdb from "../configdb";
 
 const db: Knex = Knex(configdb);
@@ -73,9 +79,30 @@ router.get("/:kundenid", async (req, res, next) => {
 router.post("/", async (req, res, next) => {
   try {
     const newItem: joinedKunde = req.body;
+    const newAdress: Adresse = {
+      strasse: newItem.strasse,
+      Hausnummer: newItem.Hausnummer,
+      stadt: newItem.stadt,
+      zipcode: newItem.zipcode,
+    };
+    let [Adresse_id] = await db<Adresse>("Adresse")
+      .insert(newAdress)
+    const newKontaktdaten: Kontaktdaten = {
+      Adresse_id,
+      Email: newItem.EMail,
+      Telefonnummer: newItem.Telefonnummer,
+    };
+    let [Kontaktdaten_id] = await db<Kontaktdaten>("Kontaktdaten")
+      .insert(newKontaktdaten)
+    const newKunde: Kunde = {
+      Nachname: newItem.Nachname,
+      Vorname: newItem.Vorname,
+      Alter: newItem.Alter,
+      Kontaktdaten_id,
+    };
 
     db<Kunde>("Kunde")
-      .insert(newItem)
+      .insert(newKunde)
       .then((result) => res.json(result))
       .catch((err) => next(err));
   } catch (error) {
