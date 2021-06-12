@@ -125,13 +125,15 @@ router.patch("/", async (req, res, next) => {
     let Adresse_id = await db<Adresse>("Adresse").update(newAdress).where({id: newAdress.id});
     
     const newKontaktdaten: Kontaktdaten = {
-      Adresse_id,
+      id: newItem.Kontaktdaten_id,
+      Adresse_id: newItem.Adresse_id,
       EMail: newItem.EMail,
       Telefonnummer: newItem.Telefonnummer,
     };
     let Kontaktdaten_id = await db<Kontaktdaten>("Kontaktdaten").update(newKontaktdaten).where({id: newKontaktdaten.id});
 
     const newKunde: Kunde = {
+      id: newItem.id,
       Nachname: newItem.Nachname,
       Vorname: newItem.Vorname,
       Alter: newItem.Alter,
