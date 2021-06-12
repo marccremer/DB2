@@ -26,7 +26,7 @@ exports.up = async (knex) => {
     table.increments().notNullable();
     references(table, tableNames.adresse);
     email(table, 'EMail');
-    table.integer('Telefonnummer');
+    table.bigInteger('Telefonnummer');
   });
 
   await knex.schema.createTable(tableNames.coronaInfo, (table) => {
