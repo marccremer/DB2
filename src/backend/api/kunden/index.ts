@@ -85,15 +85,15 @@ router.post("/", async (req, res, next) => {
       stadt: newItem.stadt,
       zipcode: newItem.zipcode,
     };
-    let [Adresse_id] = await db<Adresse>("Adresse")
-      .insert(newAdress)
+    let [Adresse_id] = await db<Adresse>("Adresse").insert(newAdress);
     const newKontaktdaten: Kontaktdaten = {
       Adresse_id,
       EMail: newItem.EMail,
       Telefonnummer: newItem.Telefonnummer,
     };
-    let [Kontaktdaten_id] = await db<Kontaktdaten>("Kontaktdaten")
-      .insert(newKontaktdaten)
+    let [Kontaktdaten_id] = await db<Kontaktdaten>("Kontaktdaten").insert(
+      newKontaktdaten
+    );
     const newKunde: Kunde = {
       Nachname: newItem.Nachname,
       Vorname: newItem.Vorname,
@@ -122,32 +122,31 @@ router.patch("/", async (req, res, next) => {
       stadt: newItem.stadt,
       zipcode: newItem.zipcode,
     };
-    let Adresse_id = await db<Adresse>("Adresse").update(newAdress).where({id: newAdress.id});
-    
+    let Adresse_id = await db<Adresse>("Adresse")
+      .update(newAdress)
+      .where({ id: newAdress.id });
+
     const newKontaktdaten: Kontaktdaten = {
       id: newItem.Kontaktdaten_id,
       Adresse_id: newItem.Adresse_id,
       EMail: newItem.EMail,
       Telefonnummer: newItem.Telefonnummer,
     };
-    let Kontaktdaten_id = await db<Kontaktdaten>("Kontaktdaten").update(newKontaktdaten).where({id: newKontaktdaten.id});
+    let Kontaktdaten_id = await db<Kontaktdaten>("Kontaktdaten")
+      .update(newKontaktdaten)
+      .where({ id: newKontaktdaten.id });
 
     const newKunde: Kunde = {
-      id: newItem.id,
       Nachname: newItem.Nachname,
       Vorname: newItem.Vorname,
       Alter: newItem.Alter,
-      Kontaktdaten_id,
+      Kontaktdaten_id: newItem.Kontaktdaten_id,
     };
 
-    db<Kunde>("Kunde")
-      .update(newKunde)
-      .where({id: newKunde.id})
-      .then((result) => res.json(result))
-      .catch((err) => {
-        console.log(err);
-        next(err);
-      });
+    let result = await db<Kunde>("Kunde")
+      .where("id", "=", newItem.id)
+      .update(newKunde);
+    res.json(result);
   } catch (error) {
     next(error);
   }
