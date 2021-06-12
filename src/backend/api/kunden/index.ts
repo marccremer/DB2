@@ -114,11 +114,33 @@ router.post("/", async (req, res, next) => {
 
 router.patch("/", async (req, res, next) => {
   try {
-    const newItem: Kunde = req.body;
+    const newItem: joinedKunde = req.body;
+    const newAdress: Adresse = {
+      id: newItem.Adresse_id,
+      strasse: newItem.strasse,
+      Hausnummer: newItem.Hausnummer,
+      stadt: newItem.stadt,
+      zipcode: newItem.zipcode,
+    };
+    let Adresse_id = await db<Adresse>("Adresse").update(newAdress).where({id: newAdress.id});
+    
+    const newKontaktdaten: Kontaktdaten = {
+      Adresse_id,
+      EMail: newItem.EMail,
+      Telefonnummer: newItem.Telefonnummer,
+    };
+    let Kontaktdaten_id = await db<Kontaktdaten>("Kontaktdaten").update(newKontaktdaten).where({id: newKontaktdaten.id});
+
+    const newKunde: Kunde = {
+      Nachname: newItem.Nachname,
+      Vorname: newItem.Vorname,
+      Alter: newItem.Alter,
+      Kontaktdaten_id,
+    };
 
     db<Kunde>("Kunde")
-      .update(newItem)
-      .where("id", [newItem.id])
+      .update(newKunde)
+      .where({id: newKunde.id})
       .then((result) => res.json(result))
       .catch((err) => {
         console.log(err);

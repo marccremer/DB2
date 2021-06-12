@@ -63,12 +63,14 @@ interface joinedKunde extends Kunde {
 }
 
 interface Kontaktdaten  {
+  id?: Number;
   Adresse_id:number;
   EMail:String;
   Telefonnummer:number;
 }
 
 interface Adresse  {
+  id?: Number;
   strasse: string;
   Hausnummer: string;
   stadt: string;
