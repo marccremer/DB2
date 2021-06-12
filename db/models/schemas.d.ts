@@ -64,7 +64,7 @@ interface joinedKunde extends Kunde {
 
 interface Kontaktdaten  {
   Adresse_id:number;
-  Email:String;
+  EMail:String;
   Telefonnummer:number;
 }
 

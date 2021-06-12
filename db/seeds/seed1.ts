@@ -88,19 +88,19 @@ exports.seed = async (knex : Knex) => {
   .returning('id');
 
   const kontaktdaten1 : Kontaktdaten = {
-    "E-mail":'sample@test.de',
+    EMail:'sample@test.de',
     Telefonnummer:23123213,
     Adresse_id: adresseId1,
   };
   
   const kontaktdaten2 : Kontaktdaten = {
-    "E-mail":'sample@test.de',
+    EMail:'sample@test.de',
     Telefonnummer:23123213,
     Adresse_id: adresseId1,
   };
 
   const kontaktdaten3 : Kontaktdaten = {
-    "E-mail":'sample@test.de',
+    EMail:'sample@test.de',
     Telefonnummer:23123213,
     Adresse_id: adresseId1+1,
   };
@@ -110,21 +110,21 @@ exports.seed = async (knex : Knex) => {
   .returning('id');
   
   const kunde1 : Kunde = {
-    vorname: 'Marc',
-    nachname: 'Mustermann',
-    alter: 21,
+    Vorname: 'Marc',
+    Nachname: 'Mustermann',
+    Alter: 21,
     Kontaktdaten_id: kontaktdatenId1,
   };
   const kunde2 : Kunde = {
-    vorname: 'Edgar',
-    nachname: 'Mustermann',
-    alter: 21,    
+    Vorname: 'Edgar',
+    Nachname: 'Mustermann',
+    Alter: 21,    
     Kontaktdaten_id: kontaktdatenId1+1,
   };
   const kunde3 : Kunde = {
-    vorname: 'Maik',
-    nachname: 'Mustermann',
-    alter: 21,    
+    Vorname: 'Maik',
+    Nachname: 'Mustermann',
+    Alter: 21,    
     Kontaktdaten_id: kontaktdatenId1+2,
   };
   

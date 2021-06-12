@@ -89,7 +89,7 @@ router.post("/", async (req, res, next) => {
       .insert(newAdress)
     const newKontaktdaten: Kontaktdaten = {
       Adresse_id,
-      Email: newItem.EMail,
+      EMail: newItem.EMail,
       Telefonnummer: newItem.Telefonnummer,
     };
     let [Kontaktdaten_id] = await db<Kontaktdaten>("Kontaktdaten")
