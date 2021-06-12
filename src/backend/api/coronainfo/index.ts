@@ -2,7 +2,12 @@ import express from "express";
 import Knex from "knex";
 import { coronaInfo } from "../../../../db/models/schemas";
 import configdb from "../configdb";
+import * as date from "date-and-time";
 
+const datformater = (oldformat :string) => {
+  return  date.format(oldformat,'YYYY/MM/DD HH:mm:ss')
+
+}
 
 const db: Knex = Knex(configdb);
 
@@ -41,14 +46,34 @@ router.get("/:infoid", async (req, res, next) => {
   }
 });
 
-// create 1
+// create 1 2021-06-12T10:16:20.000Z
 router.post("/", async (req, res, next) => {
   try {
     const newItem: coronaInfo = req.body;
+    console.log(newItem.Datum);
+    
+    //newItem.Datum = datformater(newItem.Datum)
     db<coronaInfo>("CoronaInfo")
       .insert(newItem)
       .then((result) => res.json(result))
       .catch((err) => next(err));
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.delete("/:id", async (req, res, next) => {
+  try {
+    const id = req.params.id;
+
+    db<coronaInfo>("CoronaInfo")
+      .where("id", [id])
+      .del()
+      .then((result) => res.json(result))
+      .catch((err) => {
+        console.log(err);
+        next(err);
+      });
   } catch (error) {
     next(error);
   }
