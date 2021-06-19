@@ -54,7 +54,6 @@ DELETE FROM Raum;
 INSERT INTO RAUM(ID, NAME, AUSENBEREICH, MAX_ANZAHL_PERSONEN, FLAECHE_IN_M2) VALUES (1,'Hauptraum',1,50,100);
 INSERT INTO Tischgruppe(ID, NAME, RAUM_ID) VALUES (1,'TischgruppeAlpha',1);
 INSERT INTO TISCH(ID, ANZAHL_PLAETZE, TISCHGRUPPE_ID) VALUES (1,40,1);
-#INSERT INTO TISCH(ID, ANZAHL_PLAETZE, TISCHGRUPPE_ID) VALUES (2,50,1);
 COMMIT;
 
 # reduzierung der max_anzahl_personen im raum führt dazu, dass die anzahl der plaetze an den tischen im raum auf 30 reduziert wird

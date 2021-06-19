@@ -20,3 +20,57 @@ SELECT * FROM BEGLEITER WHERE ID = 46;
 --hier sollte bei Reservierungmitbegleiter der Datensatz mit der Begleiterid 46 nicht zu sehen sein und der Begleiter mit der ID 46
 --sollte nicht mehr in der Tabelle vorhanden sein
 
+-- testfälle für die rebooking-prozedur
+
+#mit aktuellen Datensätzen arbeiten 
+DELETE FROM ADRESSE;
+DELETE FROM KONTAKTDATEN;
+DELETE FROM RESERVIER;
+DELETE FROM Reservierung;
+
+INSERT INTO ADRESSE(ID, STRASSE, HAUSNUMMER, STADT, ZIPCODE)
+VALUES (1,'Berliner Strasse',32,'Köln','50607');
+
+INSERT INTO KONTAKTDATEN (ID, ADRESSE_ID, "E-Mail", TELEFONNUMMER)
+VALUES (1,1,'christop.mueller.de','022919199');
+
+INSERT INTO RESERVIER(ID, "Vorname", "Nachname", KONTAKTDATEN_ID, "Kreditkartennummer")
+VALUES (1,'Christoph','Müller',1,'07756664464');
+
+
+INSERT INTO Reservierung(ID, DATUMSZEIT, STORNIERT, RESERVIERER_ID)
+VALUES (1, TO_DATE('19.06.2021','DD.MM.YYYY'), 0, 1);
+COMMIT;
+
+# hinweis: die prozedur ist aufgrund von CURRENT_DATE dynamisch und muss für die test-und fehlerfälle angepasst werden
+# eine umbuchung auf einen bereits vergangenen Tag ist nicht mehr möglich
+# angenommen heute ist der 19.juni, dann wäre eine umbuchung auf den 18.juni nicht mehr möglich 
+CALL rebooking(TO_DATE('18.06.2021','DD.MM.YYYY'),1);
+
+# wenn heute nicht der CURRENT_DATE ist, kann die reservierung auch vorgezogen oder auch verschoben werden 
+CALL rebooking(TO_DATE('18.06.2021','DD.MM.YYYY'),1);
+CALL rebooking(TO_DATE('22.06.2021','DD.MM.YYYY'),1);
+
+
+
+# testfälle für den Trigger reduzierung_plaetze
+
+# mit aktuellen Datensätzen arbeiten
+DELETE FROM Tisch;
+DELETE FROM Raum;
+
+# reduzierung der max_anzahl_personen im raum führt dazu, dass die anzahl der plaetze an den tischen im raum auf 30 reduziert wird
+UPDATE Raum
+SET max_Anzahl_Personen = 30
+WHERE id = 1;
+
+# testfall, für zwei tische die sich im selben raum befinden
+# insgesamt 80 plaetze an allen tischen
+INSERT INTO TISCH(ID, ANZAHL_PLAETZE, TISCHGRUPPE_ID) VALUES (2,50,1); 
+
+# die gesamtanzahl der plaetze an den tischen wird entsprechend auf 15 reduziert 
+UPDATE Raum
+SET max_Anzahl_Personen = 15
+WHERE id = 1;
+
+

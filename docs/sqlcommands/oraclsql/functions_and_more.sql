@@ -41,42 +41,57 @@ BEGIN
 END ;
 
 
-create trigger REDUZIERUNG_PLAETZE
+create or replace trigger REDUZIERUNG_PLAETZE
     after update
     on RAUM
     for each row
 DECLARE
     v_currAnzahlPlaetze NUMBER(10);
-    v_raumId NUMBER(10);
-    c_plaetze NUMBER(10);
-    v_tischId NUMBER(10);
-    tmp_pltz NUMBER(10);
-    done NUMBER(10) DEFAULT 0;
-        CURSOR mycursor IS SELECT T2.id, T2.anzahl_plaetze
-                                from Raum
-                                         join Tischgruppe T on Raum.id = T.Raum_id
-                                         join Tisch T2 on T.id = T2.Tischgruppe_id;
+    v_raumId            NUMBER(10);
+    c_plaetze           NUMBER(10);
+    v_tischId           NUMBER(10);
+    tmp_pltz            NUMBER(10);
+    done                NUMBER(10) DEFAULT 0;
+
+    --CURSOR mycursor IS SELECT T2.id, T2.anzahl_plaetze
+    --from Raum
+    --join Tischgruppe T on Raum.id = T.Raum_id
+    --join Tisch T2 on T.id = T2.Tischgruppe_id;
+
+    CURSOR mycursor IS SELECT T2.id, T2.ANZAHL_PLAETZE
+                       FROM Tischgruppe T
+                                join Tisch T2 on T.id = T2.TISCHGRUPPE_ID
+                       WHERE T.RAUM_ID = :NEW.id;
+
+
 BEGIN
     v_raumId := :NEW.id;
-    v_currAnzahlPlaetze := gesamtanzahl_Plaetze(v_raumId);
+    --v_currAnzahlPlaetze := gesamtanzahl_Plaetze(v_raumId);
+    SELECT SUM(T2.ANZAHL_PLAETZE)
+    INTO v_currAnzahlPlaetze
+    FROM Tischgruppe T
+             join Tisch T2 on T.id = T2.TISCHGRUPPE_ID
+    WHERE T.RAUM_ID = :NEW.id;
+    --DBMS_OUTPUT.PUT_LINE(v_currAnzahlPlaetze);
     open mycursor;
     LOOP
         fetch mycursor into v_tischId,c_plaetze;
-        if mycursor%notfound then done := 1;
+        if mycursor%notfound then
+            done := 1;
         end if;
-            Exit WHEN done = 1 OR v_currAnzahlPlaetze <= :NEW.max_Anzahl_Personen ;
+        Exit WHEN done = 1 OR v_currAnzahlPlaetze <= :NEW.max_Anzahl_Personen;
 
         Begin
-        Select anzahl_plaetze into tmp_pltz from Tisch where Tisch.id = v_tischId;
-        Exception when No_data_found then  done := 1;
+            Select anzahl_plaetze into tmp_pltz from Tisch where Tisch.id = v_tischId;
+        Exception
+            when No_data_found then done := 1;
         End;
-        UPDATE Tisch set anzahl_plaetze = 0 where id = v_tischId;
 
         IF tmp_pltz >= v_currAnzahlPlaetze THEN
             UPDATE Tisch
             SET anzahl_plaetze = :NEW.max_Anzahl_Personen
             WHERE id = v_tischId;
-        v_currAnzahlPlaetze := :NEW.max_Anzahl_Personen;
+            v_currAnzahlPlaetze := :NEW.max_Anzahl_Personen;
         ELSE
             UPDATE Tisch set anzahl_plaetze = 0 where id = v_tischId;
 
