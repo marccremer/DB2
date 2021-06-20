@@ -51,7 +51,6 @@ router.post("/", async (req, res, next) => {
     }
     let [neueReserviererungsId] = await db<Reservierung>("Reservierung").insert(newReservierung);
     const newAllBegleiter:Begleiter[]=[]
-    console.log(newItem.Kundennummern);
     for(const id of newItem.Kundennummern){
       const newBegleiter : Begleiter={
         Kunde_id:id,
@@ -59,7 +58,6 @@ router.post("/", async (req, res, next) => {
       }
       newAllBegleiter.push(newBegleiter);
     }
-    console.log(newAllBegleiter);
     db<Begleiter>("Begleiter")
       .insert(newAllBegleiter)
       .then((result) => res.json(result))
