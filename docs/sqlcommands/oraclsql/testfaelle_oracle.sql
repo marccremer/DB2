@@ -42,6 +42,22 @@ INSERT INTO Reservierung(ID, DATUMSZEIT, STORNIERT, RESERVIERER_ID)
 VALUES (1, TO_DATE('19.06.2021','DD.MM.YYYY'), 0, 1);
 COMMIT;
 
+-- Der Raum mit der ID 1 , den Namen TestRaum mit einer Max Anzahl Personen
+-- von 0 und Größe von 15 erstellt
+INSERT INTO Raum (ID, NAME, AUSENBEREICH, MAX_ANZAHL_PERSONEN, FLAECHE_IN_M2) VALUES (1,'TestRaum',0,0,15);
+COMMIT ;
+-- Ausgabe der Tabelle zur verifikation
+SELECT * FROM Raum;
+
+-- Die CoronaInfo mit der Id 1 wird erstellt , mit einer Angabe von 5 Personen pro qm
+-- Der Trigger maxAnzahlPersonen sollte nun den Wert Max_Anzahl_Personen von 0 auf 75 anheben.
+INSERT INTO CoronaInfo (id, momentane_Inzidenz, maxAnzahlPersonnen_pro_qm, Datum) VALUES (1,10,5,TO_DATE('2021-06-02', 'yyyy-mm-dd'));
+COMMIT;
+-- Ausgabe der Tabelle zur verifikation 
+SELECT * FROM CoronaInfo;
+SELECT * FROM Raum;
+
+
 # hinweis: die prozedur ist aufgrund von CURRENT_DATE dynamisch und muss für die test-und fehlerfälle angepasst werden
 # eine umbuchung auf einen bereits vergangenen Tag ist nicht mehr möglich
 # angenommen heute ist der 19.juni, dann wäre eine umbuchung auf den 18.juni nicht mehr möglich 
