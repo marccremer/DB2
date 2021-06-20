@@ -1,6 +1,6 @@
 import express from "express";
 import Knex from "knex";
-import { Reservierung } from "../../../../db/models/schemas";
+import { Begleiter, Reservierung, ReservierungHilfe } from "../../../../db/models/schemas";
 import configdb from "../configdb";
 
 
@@ -44,11 +44,43 @@ router.get("/:reservierungid", async (req, res, next) => {
 // create 1
 router.post("/", async (req, res, next) => {
   try {
-    const newItem: Reservierung = req.body;
-    db<Reservierung>("Reservierung")
-      .insert(newItem)
+    const newItem: ReservierungHilfe = req.body;
+    const newReservierung: Reservierung = {
+      Datumszeit:newItem.Datumszeit,
+      reservierer_id:newItem.reservierer_id
+    }
+    let [neueReserviererungsId] = await db<Reservierung>("Reservierung").insert(newReservierung);
+    const newAllBegleiter:Begleiter[]=[]
+    console.log(newItem.Kundennummern);
+    for(const id of newItem.Kundennummern){
+      const newBegleiter : Begleiter={
+        Kunde_id:id,
+        Reservierung_id:neueReserviererungsId
+      }
+      newAllBegleiter.push(newBegleiter);
+    }
+    console.log(newAllBegleiter);
+    db<Begleiter>("Begleiter")
+      .insert(newAllBegleiter)
       .then((result) => res.json(result))
       .catch((err) => next(err));
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.delete("/:reservierungId", async (req, res, next) => {
+  try {
+    const id = req.params.reservierungId;
+
+    db<Reservierung>("Reservierung")
+      .where("id", [id])
+      .del()
+      .then((result) => res.json(result))
+      .catch((err) => {
+        console.log(err);
+        next(err);
+      });
   } catch (error) {
     next(error);
   }

@@ -23,6 +23,14 @@ interface Reservierung  {
   reservierer_id:number;
 }
 
+interface ReservierungHilfe{
+  Datumszeit: string;
+  deleted?: boolean;
+  storniert?: boolean;
+  reservierer_id:number;
+  Kundennummern:Array<number>;
+}
+
 interface Tischreservierung  {
   Tisch_id:number;
   reservierung_id:number;
@@ -35,7 +43,8 @@ interface Teilnehmer {
 }
 
 interface Begleiter  {
-  Kunden_id:number;
+  Kunde_id:number;
+  Reservierung_id:number;
 }
 
 interface Reservierer  {
@@ -97,4 +106,5 @@ export {
   Kontaktdaten,
   Adresse,
   coronaInfo,
+  ReservierungHilfe,
 }
