@@ -73,11 +73,11 @@ now you can login with the above mainUser.
 * Automatische Reduzierung der Plätze am Tisch, wenn die Inzidenz eine bestimmte Zielmarke erreicht hat _Trigger_
 
 ### Trigger:
-* Fehlermeldung bei Hinzufügen von Kunden bei Reservierungen die schon zur Zeit woanders sitzen -> Insert _Maik_
-* Fehlermeldung bei Invaliden Kunden Insert  _Adrian_
-* Stornierung von Reservierungen _Marc_
-* Reduzierung an Plätzen an den Tischen _Edgar_
-* Erhöhen der maxAnzahlPersonen _Christoph_
+* Fehlermeldung bei Hinzufügen von Kunden bei Reservierungen die schon zur Zeit woanders sitzen -> Insert 
+* Fehlermeldung bei Invaliden Kunden Insert 
+* Stornierung von Reservierungen
+* Reduzierung an Plätzen an den Tischen 
+* Erhöhen der maxAnzahlPersonen 
 
 ### Views:
 * Kunden im Restaurant jetzt
