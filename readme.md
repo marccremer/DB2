@@ -1,19 +1,9 @@
 # DB2 Praktikum - ReservierungsMaster 21
-Gruppe 47
-
-Betreuer: L. Radigk
-
-https://th-koeln.zoom.us/j/88067891570
-Meeting-ID: 880 6789 1570
-Kenncode: dbs2
-
-**nächster Termin:**
-
-Do 27.05 18:00
 
 ## Requirements
 
 * node
+* yarn
 * docker
 * docker-compose
 
@@ -24,10 +14,10 @@ The content of the File should be
 
 ```
 NODE_ENV=development
-DB_REMOTE_HOST=studidb.gm.th-koeln.de
-DB_REMOTE_USER=<GMID>
+DB_REMOTE_HOST=<HOST>
+DB_REMOTE_USER=<USER>
 DB_REMOTE_PW=<PW>
-DB_REMOTE_NAME=VLESUNG.GM.FH-KOELN.DE
+DB_REMOTE_NAME=<DATABASENAME>
 DEBUG=knex:query
 DB_LOCAL_HOST=localhost
 DB_LOCAL_USER=mainUser
@@ -36,7 +26,7 @@ DB_LOCAL_NAME=developDB
 ```
 
 ```
-npm install
+yarn install
 ```
 Then
 ```
@@ -44,8 +34,8 @@ docker-compose up
 ```
 ```
 set global..
-npm run migrate
-npm run seed
+yarn run migrate
+yarn run seed
 ```
 
 
@@ -60,11 +50,11 @@ SET GLOBAL log_bin_trust_function_creators = 1;
 
 Then in a Terminal run 
 ```js
-npm run migrate
+yarn run migrate
 ```
 and
 ```js
-npm run seed
+yarn run seed
 ```
 
 now you can login with the above mainUser.
