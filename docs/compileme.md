@@ -28,7 +28,7 @@ Für die Realisierung unserer Idee benötigen wir einerseits die Kundendaten und
 
 ## Use Case
 
-![Usecase-diagramm](./static/usecase/UseCaseDiagramm.png)
+![Usecase-diagramm](https://github.com/marccremer/DB2/blob/main/docs/ERM%20Diagramm2_30052021.png?raw=true)
 
 ### Benutzergruppen
 
